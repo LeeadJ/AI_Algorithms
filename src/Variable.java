@@ -35,4 +35,18 @@ public class Variable {
 
         this._cpt = new CPT(other._cpt);
     }
+
+    /** Getters: */
+    public String getName(){ return _name;}
+    public ArrayList<Variable> getParents() {return _parents;}
+    public ArrayList<Variable> getChildren() {return _children;}
+
+    public ArrayList<String> getOutcomes() {return _outcomes;}
+    public CPT getCPT() {return _cpt;}
+
+    /** Setters: */
+    public void setName(String name) {this._name = name;}
+    public void setParents(ArrayList<Variable> parents) {this._parents = parents;}
+    public void setChildren(ArrayList<Variable> children) {this._children = children;}
+    public void set_outcomes(ArrayList<String> outcomes) {this._outcomes = outcomes;}
 }
