@@ -69,4 +69,62 @@ public class Variable {
         return var;
     }
 
+    public void addParent(Variable p) {this._parents.add(p);}
+    public void addChild(Variable c) {this._children.add(c);}
+    public void addOutcomes(String out) {this._outcomes.add(out);}
+
+    /**@param values - the values of the probability from the xml file.
+     * Each index of the String array represents a row of the CPT table.*/
+    public void initCPT(String[] values){
+        this._cpt._row_size = values.length;
+        for(int i=0; i<values.length; i++){
+            HashMap<String, String> rows = new HashMap<>();
+            rows.put(this._name, this._outcomes.get(i % this._outcomes.size()));
+            int j = this._parents.size() -1;
+            int outcome_size = this._outcomes.size();
+            while(j >= 0){
+                Variable temp = this._parents.get(i);
+                rows.put(temp.getName(), temp.getOutcomes().get((i / outcome_size % temp.getOutcomes().size())));
+                j--;
+                outcome_size *= temp.getOutcomes().size();
+            }
+            rows.put("Pr", values[i]);
+            this._cpt._cpt_table.add(rows);
+        }
+    }
+
+    /**Recursion Method to check if a current variable is a descendant of a given variable.
+     * @param other - potential ancestor variable.*/
+    public boolean isAncestor(Variable other){
+        if(other.getChildren().contains(this))
+            return true;
+        for(int i=0; i<other.getChildren().size(); i++){
+            if(isAncestor(other.getChildren().get(i)))
+                return true;
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Variable a = new Variable("A");
+        Variable b = new Variable("B");
+        Variable j = new Variable("J");
+        Variable e = new Variable("E");
+        Variable m = new Variable("M");
+        b.addChild(a);
+        e.addChild(a);
+        a.addChild(j);
+        a.addChild(m);
+        a.addParent(e);
+        a.addParent(b);
+        j.addParent(a);
+        m.addParent(a);
+
+        System.out.println(b.toString());
+        System.out.println(e.toString());
+        System.out.println(a.toString());
+        System.out.println(j.toString());
+        System.out.println(m.toString());
+    }
+
 }
