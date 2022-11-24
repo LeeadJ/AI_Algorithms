@@ -49,4 +49,24 @@ public class Variable {
     public void setParents(ArrayList<Variable> parents) {this._parents = parents;}
     public void setChildren(ArrayList<Variable> children) {this._children = children;}
     public void set_outcomes(ArrayList<String> outcomes) {this._outcomes = outcomes;}
+
+    /** Functions: */
+    @Override
+    public String toString(){
+        String var = "\nVariable Name: " + this._name;
+        var += "\nParents: [";
+        for(Variable p : this._parents)
+            var += p.getName() + ", ";
+        if(this._parents.size() != 0)
+            var = var.substring(0, var.length()-2);
+        var += "]\nChildren: [";
+        for(Variable c : this._children)
+            var += c.getName() + ", ";
+        if(this._children.size() != 0)
+            var = var.substring(0, var.length()-2);
+        var += "]\nOutcomes: " + this._outcomes;
+        var += "\n\tCPT: " + this._cpt.toString();
+        return var;
+    }
+
 }
