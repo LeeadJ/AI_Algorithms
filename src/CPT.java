@@ -22,6 +22,14 @@ public class CPT {
         this._row_size = other._row_size;
     }
 
+    @Override
+    public String toString(){
+        String cpt = "\nRow Count: " + this._row_size + "\n";
+        for(HashMap<String, String> map : this._cpt_table)
+            cpt += map.toString() + "\n";
+        return cpt;
+    }
+
 
 
 
