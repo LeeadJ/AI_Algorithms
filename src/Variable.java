@@ -76,14 +76,16 @@ public class Variable {
     /**@param values - the values of the probability from the xml file.
      * Each index of the String array represents a row of the CPT table.*/
     public void initCPT(String[] values){
+        //System.out.println("\t\tINIT CPT START: ");
         this._cpt._row_size = values.length;
+        //System.out.println("CPT ROW SIZE: "+ this._cpt._row_size);
         for(int i=0; i<values.length; i++){
             HashMap<String, String> rows = new HashMap<>();
             rows.put(this._name, this._outcomes.get(i % this._outcomes.size()));
             int j = this._parents.size() -1;
             int outcome_size = this._outcomes.size();
             while(j >= 0){
-                Variable temp = this._parents.get(i);
+                Variable temp = this._parents.get(j);
                 rows.put(temp.getName(), temp.getOutcomes().get((i / outcome_size % temp.getOutcomes().size())));
                 j--;
                 outcome_size *= temp.getOutcomes().size();
@@ -91,6 +93,7 @@ public class Variable {
             rows.put("Pr", values[i]);
             this._cpt._cpt_table.add(rows);
         }
+
     }
 
     /**Recursion Method to check if a current variable is a descendant of a given variable.
