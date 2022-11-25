@@ -29,9 +29,4 @@ public class CPT {
             cpt += map.toString() + "\n";
         return cpt;
     }
-
-
-
-
-
 }
