@@ -7,14 +7,14 @@ public class CreateOutput {
     private static ArrayList<String> _lines;
 
     public static void addLine(String line){
-        if(line == null)
+        if(_lines == null)
             _lines = new ArrayList<>();
-        _lines.add(line);
+        _lines.add(line + "\n");
     }
 
     public static void writeToFile(){
         try{
-            FileWriter myWriter = new FileWriter("output.txt");
+            FileWriter myWriter = new FileWriter("outputTest.txt");
             for(String toWrite : _lines){
                 myWriter.write(toWrite);
             }
