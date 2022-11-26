@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Variable {
-    /** The InputParser Class will hold three variables:
+    /** The Variable Class will hold five variables:
      * 1) _name: The name of the variable.
      * 2) _parents: An ArrayList of type Variable representing the current variables parents.
      * 3) _children: An ArrayList of type Variable representing the current variables children.
