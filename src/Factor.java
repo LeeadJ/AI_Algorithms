@@ -58,9 +58,19 @@ public class Factor implements Comparable<Factor> {
                 _row_size--;
             }
     }
+
+    /** This function allows us to compare a Factor size to another Factor.
+     * @param other - Factor to compare to.
+     * @return - 1: Current factor has more rows. -1: Given Factor has more rows.*/
     @Override
-    public int compareTo(Factor o) {
-        return 0;
+    public int compareTo(Factor other) {
+        if(_row_size > other._row_size) return 1;
+        else if(other._row_size > _row_size) return -1;
+        //If the row sizes are the same, compare by ascii value:
+        else if(this.asciiValue() > other.asciiValue()) return 1;
+        else if(other.asciiValue() > this.asciiValue()) return -1;
+        //If reached here, Factors are the same. Return current Factor:
+        return 1;
     }
 
     @Override
@@ -91,5 +101,4 @@ public class Factor implements Comparable<Factor> {
         _table.add(new_row);
         _row_size++;
     }
-
 }
