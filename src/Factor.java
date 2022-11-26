@@ -72,14 +72,24 @@ public class Factor implements Comparable<Factor> {
       return str.toString();
     }
 
+    /** This function finds the ASCII value of the Factor.
+     * @return - ascii value (int). */
     public int asciiValue(){
         int val = 0;
         for(String key : _table.get(0).keySet()){
             for(int i=0; i<key.length(); i++){
-                val += (int) key.charAt(i);
+                val += key.charAt(i);
             }
         }
         return val;
+    }
+
+    /** This function adds a new row to the table (used in VE). */
+    public void add_row(String prob){
+        HashMap<String, String> new_row = new HashMap<>();
+        new_row.put("Pr ", prob);
+        _table.add(new_row);
+        _row_size++;
     }
 
 }
