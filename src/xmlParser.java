@@ -11,11 +11,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class xml_Parser {
+public class xmlParser {
 
     private final String _FILENAME;
 
-    public xml_Parser(String FILENAME){ this._FILENAME = FILENAME;}
+    public xmlParser(String FILENAME){ this._FILENAME = FILENAME;}
 
     public ArrayList<Variable> parse_file(){
         System.out.println(_FILENAME);
