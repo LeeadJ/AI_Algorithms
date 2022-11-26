@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 public class CPT {
-    /*The Cpt Class will hold two variables:
-     * 1) The tables itself - the data structure will be an ArrayList of HashMaps<String, String>.
+    /** The Cpt Class will hold two variables:
+     * 1) _cpt_table: the data structure will be an ArrayList of HashMaps<String, String>.
      *     Each index represents a row of the CPT.
-     * 2) row_size - for quick access to the row size.*/
+     * 2) _row_size: for quick access to the row size.*/
     public ArrayList<HashMap<String, String>> _cpt_table;
     public int _row_size;
 
@@ -22,6 +22,7 @@ public class CPT {
         _row_size = other._row_size;
     }
 
+    /** @return - String of the CPT. */
     @Override
     public String toString(){
         StringBuilder cpt = new StringBuilder("\nRow Count: " + _row_size + "\n");
