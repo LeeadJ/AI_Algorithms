@@ -12,28 +12,28 @@ public class Variable {
      * Constructor for the Variable.
      * @param name - Name of the event. */
     public Variable(String name){
-        this._name = name;
-        this._parents= new ArrayList<>();
-        this._children = new ArrayList<>();
-        this._outcomes = new ArrayList<>();
-        this._cpt = new CPT();
+        _name = name;
+        _parents= new ArrayList<>();
+        _children = new ArrayList<>();
+        _outcomes = new ArrayList<>();
+        _cpt = new CPT();
     }
 
     /**
      * Copy Constructor for the Variable: */
     public Variable(Variable other){
-        this._name = other._name;
+        _name = other._name;
 
-        this._parents = new ArrayList<>();
-        this._parents.addAll(other._parents);
+        _parents = new ArrayList<>();
+        _parents.addAll(other._parents);
 
-        this._children = new ArrayList<>();
-        this._children.addAll(other._children);
+        _children = new ArrayList<>();
+        _children.addAll(other._children);
 
-        this._outcomes = new ArrayList<>();
-        this._outcomes.addAll(other._outcomes);
+        _outcomes = new ArrayList<>();
+        _outcomes.addAll(other._outcomes);
 
-        this._cpt = new CPT(other._cpt);
+        _cpt = new CPT(other._cpt);
     }
 
     /** Getters: */
@@ -45,28 +45,28 @@ public class Variable {
     public CPT getCPT() {return _cpt;}
 
     /** Setters: */
-    public void setName(String name) {this._name = name;}
-    public void setParents(ArrayList<Variable> parents) {this._parents = parents;}
-    public void setChildren(ArrayList<Variable> children) {this._children = children;}
-    public void set_outcomes(ArrayList<String> outcomes) {this._outcomes = outcomes;}
+    public void setName(String name) {_name = name;}
+    public void setParents(ArrayList<Variable> parents) {_parents = parents;}
+    public void setChildren(ArrayList<Variable> children) {_children = children;}
+    public void set_outcomes(ArrayList<String> outcomes) {_outcomes = outcomes;}
 
     /** Functions: */
     @Override
     public String toString(){
-        String var = "\nVariable Name: " + this._name;
-        var += "\nParents: [";
+        StringBuilder var = new StringBuilder("\nVariable Name: " + this._name);
+        var.append("\nParents: [");
         for(Variable p : this._parents)
-            var += p.getName() + ", ";
+            var.append(p.getName()).append(", ");
         if(this._parents.size() != 0)
-            var = var.substring(0, var.length()-2);
-        var += "]\nChildren: [";
+            var = new StringBuilder(var.substring(0, var.length() - 2));
+        var.append("]\nChildren: [");
         for(Variable c : this._children)
-            var += c.getName() + ", ";
+            var.append(c.getName()).append(", ");
         if(this._children.size() != 0)
-            var = var.substring(0, var.length()-2);
-        var += "]\nOutcomes: " + this._outcomes;
-        var += "\n\tCPT: " + this._cpt.toString();
-        return var;
+            var = new StringBuilder(var.substring(0, var.length() - 2));
+        var.append("]\nOutcomes: ").append(this._outcomes);
+        var.append("\n\tCPT: ").append(this._cpt.toString());
+        return var.toString();
     }
 
     public void addParent(Variable p) {this._parents.add(p);}
@@ -77,23 +77,22 @@ public class Variable {
      * Each index of the String array represents a row of the CPT table.*/
     public void initCPT(String[] values){
         //System.out.println("\t\tINIT CPT START: ");
-        this._cpt._row_size = values.length;
+        _cpt._row_size = values.length;
         //System.out.println("CPT ROW SIZE: "+ this._cpt._row_size);
         for(int i=0; i<values.length; i++){
             HashMap<String, String> rows = new HashMap<>();
-            rows.put(this._name, this._outcomes.get(i % this._outcomes.size()));
-            int j = this._parents.size() -1;
-            int outcome_size = this._outcomes.size();
+            rows.put(_name, _outcomes.get(i % _outcomes.size()));
+            int j = _parents.size() -1;
+            int outcome_size = _outcomes.size();
             while(j >= 0){
-                Variable temp = this._parents.get(j);
+                Variable temp = _parents.get(j);
                 rows.put(temp.getName(), temp.getOutcomes().get((i / outcome_size % temp.getOutcomes().size())));
                 j--;
                 outcome_size *= temp.getOutcomes().size();
             }
             rows.put("Pr", values[i]);
-            this._cpt._cpt_table.add(rows);
+            _cpt._cpt_table.add(rows);
         }
-
     }
 
     /**Recursion Method to check if a current variable is a descendant of a given variable.
@@ -107,27 +106,4 @@ public class Variable {
         }
         return false;
     }
-
-    public static void main(String[] args) {
-        Variable a = new Variable("A");
-        Variable b = new Variable("B");
-        Variable j = new Variable("J");
-        Variable e = new Variable("E");
-        Variable m = new Variable("M");
-        b.addChild(a);
-        e.addChild(a);
-        a.addChild(j);
-        a.addChild(m);
-        a.addParent(e);
-        a.addParent(b);
-        j.addParent(a);
-        m.addParent(a);
-
-        System.out.println(b.toString());
-        System.out.println(e.toString());
-        System.out.println(a.toString());
-        System.out.println(j.toString());
-        System.out.println(m.toString());
-    }
-
 }

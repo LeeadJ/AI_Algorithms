@@ -12,10 +12,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class xmlParser {
-
     private final String _FILENAME;
 
-    public xmlParser(String FILENAME){ this._FILENAME = FILENAME;}
+    public xmlParser(String FILENAME){_FILENAME = FILENAME;}
 
     public ArrayList<Variable> parse_file(){
         System.out.println(_FILENAME);
@@ -86,43 +85,4 @@ public class xmlParser {
         }
         return variable_list;
     }
-
-//    public static void main(String[] args) {
-//        try{
-//            //creating object of type file, in order to read the xml file.
-//            File xmlDoc = new File("alarm_net.xml");
-//            //creating object of dbFact in order to work with DOM parser:
-//            DocumentBuilderFactory dbFact = DocumentBuilderFactory.newInstance();
-//            DocumentBuilder dBuild = dbFact.newDocumentBuilder();
-//            //using the doc builder in order to parse the xml file in its standard.
-//            Document doc = dBuild.parse(xmlDoc);
-//
-//            //Read root element
-//            System.out.println("Root element: " + doc.getDocumentElement().getNodeName());
-//
-//            //Read array of Variables (called NodeList):
-//            NodeList nList = doc.getElementsByTagName("VARIABLE");
-//            for(int i=0; i<nList.getLength(); i++){
-//                Node nNode = nList.item(i);
-//                System.out.println("Node name: " + nNode.getNodeName() + " " + (i+1));
-//                //reading the attributes of each Node (variable):
-//                //Only if the child of the node is an element:
-//                if(nNode.getNodeType() == Node.ELEMENT_NODE){
-//                    Element elem = (Element) nNode;
-//                    System.out.println("NAME: " + elem.getElementsByTagName("NAME").item(0).getTextContent());
-//                    System.out.println("Outcomes: " + elem.getElementsByTagName("OUTCOME").item(0).getTextContent());
-//                    System.out.println("Outcomes: " + elem.getElementsByTagName("OUTCOME").item(1).getTextContent());
-//                    System.out.println("------------------------------------------------");
-//
-//                }
-//
-//
-//            }
-//
-//
-//
-//        } catch (ParserConfigurationException | SAXException | IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 }
