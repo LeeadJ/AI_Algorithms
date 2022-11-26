@@ -2,6 +2,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Variable {
+    /** The InputParser Class will hold three variables:
+     * 1) _name: The name of the variable.
+     * 2) _parents: An ArrayList of type Variable representing the current variables parents.
+     * 3) _children: An ArrayList of type Variable representing the current variables children.
+     * 4) _outcomes: An ArrayList of type String representing the current variables outcome probabilities.
+     * 5) _cpt: The current variables CPT. */
     private String _name;
     private ArrayList<Variable> _parents;
     private ArrayList<Variable> _children;
@@ -20,7 +26,8 @@ public class Variable {
     }
 
     /**
-     * Copy Constructor for the Variable: */
+     * Copy Constructor for the Variable:
+     * @param other - The variable to be copied from.*/
     public Variable(Variable other){
         _name = other._name;
 
@@ -51,6 +58,8 @@ public class Variable {
     public void set_outcomes(ArrayList<String> outcomes) {_outcomes = outcomes;}
 
     /** Functions: */
+
+    /** @return - String of the Variable. */
     @Override
     public String toString(){
         StringBuilder var = new StringBuilder("\nVariable Name: " + this._name);
@@ -68,6 +77,7 @@ public class Variable {
         var.append("\n\tCPT: ").append(this._cpt.toString());
         return var.toString();
     }
+
 
     public void addParent(Variable p) {this._parents.add(p);}
     public void addChild(Variable c) {this._children.add(c);}
@@ -96,7 +106,8 @@ public class Variable {
     }
 
     /**Recursion Method to check if a current variable is a descendant of a given variable.
-     * @param other - potential ancestor variable.*/
+     * @param other - potential ancestor variable.
+     * @return - True or false. */
     public boolean isAncestor(Variable other){
         if(other.getChildren().contains(this))
             return true;
