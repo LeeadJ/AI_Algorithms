@@ -1,18 +1,17 @@
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-public class getInput {
-    private String _filePath;
-    public ArrayList<String> _container;
+public class InputParser {
+    private final String _filePath;
+    public ArrayList<String> _input_queries;
     public String _xmlPath;
 
     /**Constructor for getInput
      * @param input - path of txt file.*/
-    public getInput(String input){
+    public InputParser(String input){
         this._filePath = input;
-        this._container = new ArrayList<>();
+        this._input_queries = new ArrayList<>();
     }
 
     /** This function extracts the queries from the input file and saves the xml path for the xml reader.*/
@@ -22,8 +21,9 @@ public class getInput {
             BufferedReader br = new BufferedReader(fr);
             this._xmlPath = br.readLine();
             String str = br.readLine();
-            while(str != null) {
-                this._container.add(str);
+            while(str != null) { ////////why str is not printing?
+                this._input_queries.add(str);
+                System.out.println(str);
                 str = br.readLine();
             }
         } catch (IOException e) {
