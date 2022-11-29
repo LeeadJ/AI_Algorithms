@@ -14,6 +14,7 @@ public class Ex1 {
         ArrayList<Variable> arr = xml_file.parse_file();
         for(Variable var : arr)
             System.out.println(var.toString());
+        System.out.println("Hello");
 
     }
 }
