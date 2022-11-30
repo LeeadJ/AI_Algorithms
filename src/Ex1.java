@@ -8,18 +8,13 @@ public class Ex1 {
 
 
         InputParser in = new InputParser("input.txt");
-        in.extractFile();////
-//        xmlParser xml_file = new xmlParser(in._xml_Path);
-        xmlParser xml_file = new xmlParser("big_net.xml");
+        in.extractFile();
+        xmlParser xml_file = new xmlParser(in._xml_Path);
+//        xml_Parser xml_file = new xml_Parser("big_net.xml");
         ArrayList<Variable> arr = xml_file.parse_file();
-        for(Variable var : arr){
+        for(Variable var : arr)
             System.out.println(var.toString());
-            for(String s : var.getOutcomes())
-                CreateOutput.addLine(s);
-        }
-
-        CreateOutput.writeToFile();
-
+        System.out.println("Hello");
 
     }
 }
