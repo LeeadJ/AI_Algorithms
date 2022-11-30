@@ -100,7 +100,7 @@ public class Variable {
                 j--;
                 outcome_size *= temp.getOutcomes().size();
             }
-            rows.put("Pr", values[i]);
+            rows.put("Prob", values[i]);
             _cpt._cpt_table.add(rows);
         }
     }
