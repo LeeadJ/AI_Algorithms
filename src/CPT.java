@@ -3,7 +3,7 @@ import java.util.HashMap;
 public class CPT {
     /** The Cpt Class will hold two variables:
      * 1) _cpt_table: the data structure will be an ArrayList of HashMaps<String, String>.
-     *     Each index represents a row of the CPT.
+     *     Each index represents a row of the CPT. Each Hashmap
      * 2) _row_size: for quick access to the row size.*/
     public ArrayList<HashMap<String, String>> _cpt_table;
     public int _row_size;
