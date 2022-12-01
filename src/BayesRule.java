@@ -1,6 +1,9 @@
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class BayesRule {
 
@@ -9,6 +12,7 @@ public class BayesRule {
     private String _answer = "No answer calculated";
     public int _mulNum=0;
     public int _addNum=0;
+    public ArrayList<String[]> _permutations;
 
     public BayesRule(ArrayList<Variable> varList, DataCleaner _dc){
         _variableList = varList;
@@ -22,8 +26,8 @@ public class BayesRule {
     private int calcMul() {
         return (_variableList.size() -1)*(_dc._outcome_combination_num)*2;
     }
-/** This function calculates the amount of addition steps needed to solve the query.
- * Logic: (num of outcome combinations) * (2 - for the normalizer) + (1 - for the normalizer)*/
+    /** This function calculates the amount of addition steps needed to solve the query.
+    * Logic: (num of outcome combinations) * (2 - for the normalizer) + (1 - for the normalizer)*/
     private int calcAdd() {
         return (_dc._outcome_combination_num - 1) * (2) + (1);
     }
@@ -49,6 +53,42 @@ public class BayesRule {
     private double calcComplement() {
 
         return 0;
+    }
+    public ArrayList<ArrayList<String>> hiddenOutcomePermList(){
+        ArrayList<ArrayList<String>> ans = getAllPermutations();
+        return ans;
+    }
+
+    public ArrayList<ArrayList<String>> getAllPermutations() {
+        ArrayList<ArrayList<String>> final_perm_array = new ArrayList<>();
+        ArrayList<String> outcomeList = new ArrayList<>();
+        //loop through the hidden variables:
+        for(String name : _dc._hiddenList)
+            //finding a match between hidden variable name and actual variable type:
+            for(Variable var : _variableList)
+                if(name.equals(var.getName()))
+                    //loop through the outcomes of the hidden variable:
+                    for(String out : var.getOutcomes())
+                        //check if outcomeList contains outcome. If not, add:
+                        if(!outcomeList.contains(out))
+                            outcomeList.add(var.getName()+"="+out);
+
+
+        permute(outcomeList, 0, final_perm_array);
+
+
+        return final_perm_array;
+    }
+
+    private static <T> void permute(ArrayList<T> list, int index, ArrayList<ArrayList<T>> result) {
+        for (int i = index; i < list.size(); i++) {
+            Collections.swap(list, i, index);
+            permute(list, index + 1, result);
+            Collections.swap(list, index, i);
+        }
+        if (index == list.size() - 1) {
+            result.add(new ArrayList<T>(list));
+        }
     }
 
 
