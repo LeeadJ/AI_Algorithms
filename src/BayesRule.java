@@ -1,9 +1,6 @@
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class BayesRule {
 
@@ -14,6 +11,7 @@ public class BayesRule {
     public int _addNum=0;
     public ArrayList<String[]> _permutations;
 
+    /** Constructor for the BayesRule class. */
     public BayesRule(ArrayList<Variable> varList, DataCleaner _dc){
         _variableList = varList;
         this._dc = _dc;
@@ -26,16 +24,20 @@ public class BayesRule {
     private int calcMul() {
         return (_variableList.size() -1)*(_dc._outcome_combination_num)*2;
     }
+
     /** This function calculates the amount of addition steps needed to solve the query.
     * Logic: (num of outcome combinations) * (2 - for the normalizer) + (1 - for the normalizer)*/
     private int calcAdd() {
         return (_dc._outcome_combination_num - 1) * (2) + (1);
     }
+
+    /** This function returns the answer of the query. */
     public String getAnswer(){
         this.calculateQuery();
         return _answer;
     }
 
+    /** This function calculates the query and saves the line in the _answer variable. */
     private void calculateQuery(){
         _answer = "";
         double denominator = calcDenominator();
@@ -46,6 +48,7 @@ public class BayesRule {
         _answer = formatted_prob+","+_addNum+","+_mulNum;
     }
 
+
     private double calcDenominator() {
 
         return 0;
@@ -54,42 +57,69 @@ public class BayesRule {
 
         return 0;
     }
-    public ArrayList<ArrayList<String>> hiddenOutcomePermList(){
-        ArrayList<ArrayList<String>> ans = getAllPermutations();
-        return ans;
-    }
 
+    /** This function generates and returns a cleaner permutation list according to the wanted outcomes.*/
     public ArrayList<ArrayList<String>> getAllPermutations() {
-        ArrayList<ArrayList<String>> final_perm_array = new ArrayList<>();
         ArrayList<String> outcomeList = new ArrayList<>();
         //loop through the hidden variables:
         for(String name : _dc._hiddenList)
             //finding a match between hidden variable name and actual variable type:
             for(Variable var : _variableList)
-                if(name.equals(var.getName()))
+                if(name.equals(var.getName())) {
                     //loop through the outcomes of the hidden variable:
-                    for(String out : var.getOutcomes())
+                    for (String out : var.getOutcomes())
                         //check if outcomeList contains outcome. If not, add:
-                        if(!outcomeList.contains(out))
-                            outcomeList.add(var.getName()+"="+out);
-
-
-        permute(outcomeList, 0, final_perm_array);
-
-
-        return final_perm_array;
+                        if (!outcomeList.contains(out))
+                            outcomeList.add(out);
+                break;
+                }
+        ArrayList<ArrayList<String>> final_list = generate_permutations(outcomeList, outcomeList.size(), _dc._hiddenList.size());
+        //Removing the unwanted permutations:
+        System.out.println(final_list.size());
+        System.out.println(final_list);
+        int index=0;
+        outer: while(index<final_list.size()){
+            ArrayList<String> temp = final_list.get(index);
+            //Looping through the hidden variables:
+            for(int i=0; i<temp.size(); i++){
+                String temp_value = temp.get(i);
+                String hidden_name = _dc._hiddenList.get(i);
+                //finding the variable:
+                for(Variable var : _variableList){
+                    //matching hidden name with its variable type.
+                    if(var.getName().equals(hidden_name)){
+                        //checking if the hidden variable contains the outcome at the index of the temp list:
+                        if(!var.getOutcomes().contains(temp_value)){
+                            final_list.remove(temp);
+                            continue outer;
+                        }
+                        break;
+                    }
+                }
+            }
+            index++;
+        }
+        for(ArrayList<String> a : final_list)
+            System.out.println(a);
+        System.out.println(final_list.size());
+        return final_list;
     }
 
-    private static <T> void permute(ArrayList<T> list, int index, ArrayList<ArrayList<T>> result) {
-        for (int i = index; i < list.size(); i++) {
-            Collections.swap(list, i, index);
-            permute(list, index + 1, result);
-            Collections.swap(list, index, i);
+    /** This function generates all the permutations of a given array.
+     * @param outcomes - An ArrayList containing the type of outcomes to permute.
+     * @param list_size - The size of the outcomes list.
+     * @param perm_size - the size of the wanted permutations.*/
+    public ArrayList<ArrayList<String>> generate_permutations(ArrayList<String> outcomes, int list_size, int perm_size){
+        ArrayList<ArrayList<String>> flist = new ArrayList<>();
+        for(int i=0; i < (int)Math.pow(list_size, perm_size); i++){
+            int index = i;
+            ArrayList<String> alist = new ArrayList<>();
+            for (int j = 0; j < perm_size; j++){
+                alist.add(outcomes.get(index % list_size));
+                index /= list_size;
+            }
+            flist.add(alist);
         }
-        if (index == list.size() - 1) {
-            result.add(new ArrayList<T>(list));
-        }
+        return flist;
     }
-
-
 }
