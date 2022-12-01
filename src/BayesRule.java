@@ -9,7 +9,11 @@ public class BayesRule {
     private String _answer = "No answer calculated";
     public int _mulNum=0;
     public int _addNum=0;
-    public ArrayList<String[]> _permutations;
+    public ArrayList<ArrayList<String>> _permutations;
+    public ArrayList<ArrayList<String>> _fullVarList;
+    public ArrayList<ArrayList<String>> _fullValueList;
+    public ArrayList<HashMap<String, String>> _valueListbyMap;
+    public double _denominator;
 
     /** Constructor for the BayesRule class. */
     public BayesRule(ArrayList<Variable> varList, DataCleaner _dc){
@@ -17,6 +21,34 @@ public class BayesRule {
         this._dc = _dc;
         _mulNum = calcMul();
         _addNum = calcAdd();
+        _permutations = getAllPermutations();
+        _fullValueList = new ArrayList<>();
+        _fullVarList = new ArrayList<>();
+        for(ArrayList<String> temp : _permutations){
+            ArrayList<String> curr1 = new ArrayList<>();
+            ArrayList<String> curr2 = new ArrayList<>();
+            //adding the query Var and value;
+            curr1.add(_dc._queryVar);
+            curr2.add(_dc._queryVarValue);
+            //Adding the evidence var and value:
+            curr1.addAll(_dc._evidenceList);
+            curr2.addAll(_dc._evidenceValList);
+            //Adding the hidden var and val:
+            curr1.addAll(_dc._hiddenList);
+            curr2.addAll(temp);
+            //adding the curr lists to the variables:
+            _fullVarList.add(curr1);
+            _fullValueList.add(curr2);
+        }
+        _valueListbyMap = new ArrayList<>();
+        for(int i=0; i<_fullVarList.size(); i++){
+            HashMap<String, String> temp = new HashMap<>();
+            for(int j=0; j<_fullVarList.get(i).size(); j++){
+                String var = _fullVarList.get(i).get(j);
+                temp.put(var, var+"="+_fullValueList.get(0).get(j));
+            }
+            _valueListbyMap.add(temp);
+        }
     }
 
     /** This function calculates the amount of multiplication steps needed to solve the query.
@@ -40,9 +72,9 @@ public class BayesRule {
     /** This function calculates the query and saves the line in the _answer variable. */
     private void calculateQuery(){
         _answer = "";
-        double denominator = calcDenominator();
+        _denominator = calcDenominator();
         double complement = calcComplement();
-        double probability = denominator / (denominator + complement);
+        double probability = _denominator / (_denominator + complement);
         NumberFormat format_5_digits = new DecimalFormat("#0.00000");
         String formatted_prob = format_5_digits.format(probability);
         _answer = formatted_prob+","+_addNum+","+_mulNum;
@@ -50,6 +82,23 @@ public class BayesRule {
 
 
     private double calcDenominator() {
+        double ans = 1;
+        //Looping through the different combinations of the variables according to th query:
+        for(int i=0; i<_valueListbyMap.size(); i++){
+            HashMap<String, String> tempMap = _valueListbyMap.get(i);
+            for(Variable var : _variableList){
+                if(var.getParents().size() == 0){
+                    String val = tempMap.get(var.getName());
+                    for(HashMap<String, String> cpt_line_map : var.getCPT()._cpt_table){
+                        /**Continue here: find value for vriable with no parents in the cpt*/
+                        if(cp)
+                    }
+
+                }
+
+            }
+        }
+
 
         return 0;
     }
@@ -75,8 +124,8 @@ public class BayesRule {
                 }
         ArrayList<ArrayList<String>> final_list = generate_permutations(outcomeList, outcomeList.size(), _dc._hiddenList.size());
         //Removing the unwanted permutations:
-        System.out.println(final_list.size());
-        System.out.println(final_list);
+//        System.out.println(final_list.size());
+//        System.out.println(final_list);
         int index=0;
         outer: while(index<final_list.size()){
             ArrayList<String> temp = final_list.get(index);
@@ -93,15 +142,16 @@ public class BayesRule {
                             final_list.remove(temp);
                             continue outer;
                         }
+//                        temp.set(i, hidden_name+"="+temp_value);
                         break;
                     }
                 }
             }
             index++;
         }
-        for(ArrayList<String> a : final_list)
-            System.out.println(a);
-        System.out.println(final_list.size());
+//        for(ArrayList<String> a : final_list)
+//            System.out.println(a);
+//        System.out.println(final_list.size());
         return final_list;
     }
 
