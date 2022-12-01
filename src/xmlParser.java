@@ -14,10 +14,10 @@ import java.util.ArrayList;
 public class xmlParser {
     private final String _FILENAME;
 
-    public xmlParser(String FILENAME){_FILENAME = FILENAME;}
+    public xmlParser(String FILENAME){ _FILENAME = FILENAME;}
 
     public ArrayList<Variable> parse_file(){
-        System.out.println(_FILENAME);
+//        System.out.println(_FILENAME);
         ArrayList<Variable> variable_list = new ArrayList<>();
         ArrayList<String> variableName_list = new ArrayList<>();
 
