@@ -1,7 +1,6 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.Map;
 
 public class Factor implements Comparable<Factor> {
     /**
@@ -12,7 +11,8 @@ public class Factor implements Comparable<Factor> {
      * 4) _row_size: The amount of rows in the _table.
      * 5) _dc: DataCleaner.
      */
-    public String _id;
+//    public String id;
+    public ArrayList<String> _ID;
     public Variable _var;
     public ArrayList<HashMap<String, String>> _table;
     public int _row_size;
@@ -22,11 +22,12 @@ public class Factor implements Comparable<Factor> {
      * Empty Constructor for Factor:
      */
     public Factor() {
-        _id = "";
+//        id = "";
         _var = null;
         _table = new ArrayList<>();
         _row_size = 0;
         _dc = null;
+        _ID = new ArrayList<>();
     }
 
     /**
@@ -35,9 +36,10 @@ public class Factor implements Comparable<Factor> {
      */
     public Factor(Variable var, DataCleaner dc) {
         _var = new Variable(var);
-        _id = _var.getName();
+//        id = _var.getName();
         _table = new ArrayList<>();
         this._dc = dc;
+        _ID = new ArrayList<>();
         //////////////////////////////////////
         //Looping through the var CPT and adding relevant rows according to the evidence input:
         next_line:
@@ -48,9 +50,19 @@ public class Factor implements Comparable<Factor> {
                         continue next_line;
                 }
             }
-            _table.add(cpt_line);
+            HashMap<String, String> line = new HashMap<>();
+            for(Map.Entry<String, String> keyAndVal : cpt_line.entrySet()){
+                if(!dc._evidenceList.contains(keyAndVal.getKey()))
+                    line.put(keyAndVal.getKey(), keyAndVal.getValue());
+            }
+            _table.add(line);
         }
         _row_size = _table.size();
+        for(String variable : _table.get(0).keySet()){
+            if(!variable.equals("Prob"))
+                _ID.add(variable);
+        }
+
     }
 
     /**
@@ -72,7 +84,7 @@ public class Factor implements Comparable<Factor> {
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("Factor _id: " + _id + "\nRow Size: " + _row_size + "\n");
+        StringBuilder str = new StringBuilder("Factor _id: " + _ID + "\nRow Size: " + _row_size + "\n");
         for (HashMap<String, String> row : _table) {
             str.append(row.toString()).append("\n");
         }
