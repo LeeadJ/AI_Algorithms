@@ -6,16 +6,16 @@ import java.util.ArrayList;
 public class CreateOutput {
     private static ArrayList<String> _lines;
 
-    public static void addLine(String line){
-        if(_lines == null)
+    public static void addLine(String line) {
+        if (_lines == null)
             _lines = new ArrayList<>();
         _lines.add(line + "\n");
     }
 
-    public static void writeToFile(){
-        try{
+    public static void writeToFile() {
+        try {
             FileWriter myWriter = new FileWriter("outputTest.txt");
-            for(String toWrite : _lines){
+            for (String toWrite : _lines) {
                 myWriter.write(toWrite);
             }
             myWriter.close();

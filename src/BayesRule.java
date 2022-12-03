@@ -157,7 +157,8 @@ public class BayesRule {
                 tempMap.replace(_dc._queryName, outcome);
                 double tempMapSUM = 1;
                 //looping through each variable of the query to find its probability.
-                next_var: //(breakpoint)
+                next_var:
+                //(breakpoint)
                 for (Variable currVar : _variableList) {
                     //creating a map for all of its dependencies:
                     HashMap<String, String> varDependencyMap = new HashMap<>();
@@ -168,7 +169,8 @@ public class BayesRule {
                         varDependencyMap.put(parent.getName(), tempMap.get(parent.getName()));
                     }
                     //looping through the current variables CPT to find the correct line:
-                    cpt_line: //(breakpoint)
+                    cpt_line:
+                    //(breakpoint)
                     for (HashMap<String, String> cpt_line_Map : currVar.getCPT()._cpt_table) {
                         for (Map.Entry<String, String> condVarKeyVal : varDependencyMap.entrySet()) {
                             //checking if the dependency keys hold different values. If so, go to next CPT line:

@@ -4,7 +4,9 @@ public class Ex1 {
     private static final char ONE = '1';
     private static final char TWO = '2';
     private static final char THREE = '3';
+
     public static void main(String[] args) {
+//        InputParser in = new InputParser("testInput.txt");
         InputParser in = new InputParser("input.txt");
         in.extractFile();
         xmlParser xml_file = new xmlParser(in._xml_Path);
@@ -50,7 +52,7 @@ public class Ex1 {
 
             CreateOutput.writeToFile();
         }
-        for(Variable var : variableList)
+        for (Variable var : variableList)
             System.out.println(var.toString());
 
 //        InputParser in = new InputParser("input.txt");

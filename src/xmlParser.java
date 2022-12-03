@@ -14,14 +14,16 @@ import java.util.ArrayList;
 public class xmlParser {
     private final String _FILENAME;
 
-    public xmlParser(String FILENAME){ _FILENAME = FILENAME;}
+    public xmlParser(String FILENAME) {
+        _FILENAME = FILENAME;
+    }
 
-    public ArrayList<Variable> parse_file(){
+    public ArrayList<Variable> parse_file() {
 //        System.out.println(_FILENAME);
         ArrayList<Variable> variable_list = new ArrayList<>();
         ArrayList<String> variableName_list = new ArrayList<>();
 
-        try{
+        try {
             //creating object of type file, in order to read the xml file.
             File xmlDoc = new File(_FILENAME);
             //creating object of dbFact in order to work with DOM parser:
@@ -35,7 +37,7 @@ public class xmlParser {
 
             //Parsing the first set of information in the xml file ("VARIABLES", "NAME", "OUTCOME")
             NodeList nList = doc.getElementsByTagName("VARIABLE");
-            for(int i=0; i<nList.getLength(); i++) {
+            for (int i = 0; i < nList.getLength(); i++) {
                 Node nNode = nList.item(i);
 //                System.out.println("Node name: " + nNode.getNodeName() + " " + (i+1));
                 //reading the attributes of each Node (variable):
@@ -57,9 +59,9 @@ public class xmlParser {
             }
             //Parsing the second set of information in the xml file ("DEFINITION", "FOR", "GIVEN", "TABLE")
             NodeList nodeList2 = doc.getElementsByTagName("DEFINITION");
-            for(int i=0; i<nodeList2.getLength(); i++){
+            for (int i = 0; i < nodeList2.getLength(); i++) {
                 Node node = nodeList2.item(i);
-                if(node.getNodeType() == Node.ELEMENT_NODE) {
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element elem = (Element) node;
                     Variable var = variable_list.get(variableName_list.indexOf(elem.getElementsByTagName("FOR").item(0).getTextContent()));
                     int iter = 0;
