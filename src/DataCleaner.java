@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.stream.IntStream;
 
 /** This class will receive a query row, and clean the data according to certain variables.
  *  The DataCleaner Class will hold six variables:
@@ -11,10 +10,12 @@ import java.util.stream.IntStream;
  * 6) _hiddenList - A list of the hidden variables.*/
 public class DataCleaner {
 
-    public String _queryVar;
+    public String _queryName;
+    public  Variable _queryVariable;
     public String _queryVarValue;
     public ArrayList<String> _evidenceList;
     public ArrayList<String> _evidenceValList;
+    public ArrayList<String> _evidenceVarValList;
     public char _number;
     public ArrayList<String> _hiddenList;
     public int _outcome_combination_num;
@@ -33,13 +34,16 @@ public class DataCleaner {
         //Extracting the rest of the parameters:
         _evidenceList = new ArrayList<>();
         _evidenceValList = new ArrayList<>();
+        _evidenceVarValList = new ArrayList<>();
         String[] query_and_evidence_split = query.split("[|]");
-        _queryVar = query_and_evidence_split[0];
-        String[] queryVar_and_value_split = _queryVar.split("=");
+        _queryName = query_and_evidence_split[0];
+        String[] queryVar_and_value_split = _queryName.split("=");
+        _queryName = _queryName.split("=")[0];
         _queryVarValue = queryVar_and_value_split[1];
         if(query_and_evidence_split.length>1 && query_and_evidence_split[1].length() > 0){
             String[] evidence = query_and_evidence_split[1].split(",");
             for(String index : evidence){
+                _evidenceVarValList.add(index);
                 String[] index_values = index.split("=");
                 _evidenceList.add(index_values[0]);
                 _evidenceValList.add(index_values[1]);
@@ -53,11 +57,16 @@ public class DataCleaner {
                 if(name.equals(var.getName()))
                     num *= var.getOutcomes().size();
         _outcome_combination_num = num;
+
+        //finding the query Variable:
+        for(Variable var : _variableList)
+            if(var.getName().equals(_queryName))
+                _queryVariable = var;
     }
 
     public ArrayList<String> calcHidden(ArrayList<Variable> variableList){
         ArrayList<String> hidden = new ArrayList<>();
-        String[] arr = _queryVar.split("=");
+        String[] arr = _queryName.split("=");
         for(Variable var : variableList){
             if(!_evidenceList.contains(var.getName()) && !var.getName().equals(arr[0]))
                 hidden.add(var.getName());
