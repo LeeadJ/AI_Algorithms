@@ -12,30 +12,30 @@ public class Ex1 {
         for (String query : in._input_queries) {
             //Creating a DataCleaner object. This will Clean and organize the data accordingly:
             DataCleaner dc = new DataCleaner(query, variableList);
-            System.out.println(query);
-            System.out.println("_number: "+dc._number);
-            System.out.println("_queryVar: "+dc._queryName);
-            System.out.println("_queryVarValue: "+dc._queryVarValue);
-            System.out.println("_evidenceVarValList: "+dc._evidenceVarValList);
-            System.out.println("_evidenceList: "+dc._evidenceList);
-            System.out.println("_evidenceValList: "+dc._evidenceValList);
-            System.out.println("_hiddenList: "+dc._hiddenList);
-            System.out.println("_outcome_combination_num: "+dc._outcome_combination_num);
-            System.out.println("-------------------------------------");
+//            System.out.println(query);
+//            System.out.println("_number: "+dc._number);
+//            System.out.println("_queryVar: "+dc._queryName);
+//            System.out.println("_queryVarValue: "+dc._queryVarValue);
+//            System.out.println("_evidenceVarValList: "+dc._evidenceVarValList);
+//            System.out.println("_evidenceList: "+dc._evidenceList);
+//            System.out.println("_evidenceValList: "+dc._evidenceValList);
+//            System.out.println("_hiddenList: "+dc._hiddenList);
+//            System.out.println("_outcome_combination_num: "+dc._outcome_combination_num);
+//            System.out.println("-------------------------------------");
             switch (dc._number) {
                 case ONE:
                     //BayesRule
                     BayesRule br = new BayesRule(variableList, dc);
-                    System.out.println(br._addNum);
-                    System.out.println(br._mulNum);
-                    System.out.println("_fullVarList  : "+br._fullVarList);
-                    System.out.println("_fullValueList: "+br._fullValueList);
-                    System.out.println("_valueListbyMap: "+br._valueListbyMap);
-                    System.out.println("*******Permutation List: "+br._permutations);
-                    System.out.println(br.calcDenominator());
+//                    System.out.println(br._additionCounter);
+//                    System.out.println(br._multiplyCounter);
+//                    System.out.println("_fullVarList  : "+br._fullVarList);
+//                    System.out.println("_fullValueList: "+br._fullValueList);
+//                    System.out.println("_valueListbyMap: "+br._valueListByMap);
+//                    System.out.println("*******Permutation List: "+br._permutations);
+//                    System.out.println(br.calcDenominator());
                     System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 //                    System.out.println(br.calcComplement());
-                    System.out.println("\n\n br.getAnswer(): "+ br._answer+"\n\n");
+//                    System.out.println("\n\n br.getAnswer(): "+ br._answer+"\n\n");
                     CreateOutput.addLine(br._answer);
                     break;
                 case TWO:
