@@ -10,11 +10,13 @@ public class Factor implements Comparable<Factor> {
      * 2) _var: The variable of the Factor.
      * 3) _table: A copy of the CPT table containing only the wanted rows for the factor.
      * 4) _row_size: The amount of rows in the _table.
+     * 5) _dc: DataCleaner.
      */
     public String _id;
     public Variable _var;
     public ArrayList<HashMap<String, String>> _table;
     public int _row_size;
+    public DataCleaner _dc;
 
     /**
      * Empty Constructor for Factor:
@@ -24,45 +26,31 @@ public class Factor implements Comparable<Factor> {
         _var = null;
         _table = new ArrayList<>();
         _row_size = 0;
+        _dc = null;
     }
 
     /**
      * Constructor for Factor.
+     * @param dc - The DataCleaner.
      */
-    public Factor(Variable query_var, ArrayList<String> given_input) {
-        _var = new Variable(query_var);
+    public Factor(Variable var, DataCleaner dc) {
+        _var = new Variable(var);
         _id = _var.getName();
-        _row_size = _var.getCPT()._row_size;
         _table = new ArrayList<>();
-
-        //remove_rows = every true index of the array will be a row to remove according to the input and CPT
-        Boolean[] remove_rows = new Boolean[_row_size + 1];
-        Arrays.fill(remove_rows, false);
-        int rows_removed_counter = 0;
-
-        //copying the original CPT table into the table variable of the class:
-        _table.addAll(_var.getCPT()._cpt_table);
-
-        //Looping through the  variable CPT and checking which rows to remove.
-        for (int i = 0; i < _var.getCPT()._row_size; i++) {
-            for (int j = 0; j < given_input.size(); j++) {
-                //creating a map for the current CPT table row:
-                HashMap<String, String> rowMap = _var.getCPT()._cpt_table.get(i);
-                //Splitting the row in order to extract the query variable.
-                String[] queryList = given_input.get(i).split("=");
-                if (rowMap.containsKey(queryList[0]) && !Objects.equals(rowMap.get(queryList[0]), queryList[1])) {
-                    remove_rows[i] = true;
-                    break;
+        this._dc = dc;
+        //////////////////////////////////////
+        //Looping through the var CPT and adding relevant rows according to the evidence input:
+        next_line:
+        for(HashMap<String, String> cpt_line : _var.getCPT()._cpt_table){
+            for(int i=0; i<dc._evidenceList.size(); i++){
+                if(cpt_line.containsKey(dc._evidenceList.get(i))){
+                    if(!cpt_line.get(dc._evidenceList.get(i)).equals(dc._evidenceValList.get(i)))
+                        continue next_line;
                 }
             }
+            _table.add(cpt_line);
         }
-        // Remove the rows from the table where they are false in the remove_rows array:
-        for (int i = 0; i < remove_rows.length; i++)
-            if (remove_rows[i]) {
-                _table.remove(i - rows_removed_counter);
-                rows_removed_counter++;
-                _row_size--;
-            }
+        _row_size = _table.size();
     }
 
     /**
