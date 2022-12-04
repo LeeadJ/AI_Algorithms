@@ -22,9 +22,9 @@ public class BayesRule {
     /**
      * Constructor for the BayesRule class.
      */
-    public BayesRule(ArrayList<Variable> varList, DataCleaner _dc) {
+    public BayesRule(ArrayList<Variable> varList, DataCleaner dc) {
         _variableList = varList;
-        this._dc = _dc;
+        _dc = dc;
         _multiplyCounter = calcMul();
         _additionCounter = calcAdd();
         _permutations = _dc._permutationList;
