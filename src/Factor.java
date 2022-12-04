@@ -17,6 +17,7 @@ public class Factor implements Comparable<Factor> {
     public ArrayList<HashMap<String, String>> _table;
     public int _row_size;
     public DataCleaner _dc;
+    public int _ascii_value;
 
     /**
      * Empty Constructor for Factor:
@@ -28,6 +29,7 @@ public class Factor implements Comparable<Factor> {
         _row_size = 0;
         _dc = null;
         _ID = new ArrayList<>();
+        _ascii_value = 0;
     }
 
     /**
@@ -63,6 +65,9 @@ public class Factor implements Comparable<Factor> {
                 _ID.add(variable);
         }
 
+        //Calculating the ASCII value:
+        _ascii_value = asciiValue();
+
     }
 
     /**
@@ -84,7 +89,7 @@ public class Factor implements Comparable<Factor> {
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("Factor _id: " + _ID + "\nRow Size: " + _row_size + "\n");
+        StringBuilder str = new StringBuilder("Factor _id: " + _ID + "\nRow Size: " + _row_size + "\nASCII Value: "+_ascii_value + "\n");
         for (HashMap<String, String> row : _table) {
             str.append(row.toString()).append("\n");
         }
@@ -96,14 +101,14 @@ public class Factor implements Comparable<Factor> {
      *
      * @return - ascii value (int).
      */
-    public int asciiValue() {
-        int val = 0;
-        for (String key : _table.get(0).keySet()) {
-            for (int i = 0; i < key.length(); i++) {
-                val += key.charAt(i);
+    private int asciiValue(){
+        int ascii = 0;
+        for(String str : _ID){
+            for(int i=0; i<str.length(); i++){
+                ascii += str.charAt(i);
             }
         }
-        return val;
+        return ascii;
     }
 
     /**
@@ -115,4 +120,15 @@ public class Factor implements Comparable<Factor> {
         _table.add(new_row);
         _row_size++;
     }
+
+
+//    private int ascii_value() {
+//        int asciiV = 0;
+//        for (String key : this.table.get(0).keySet()) {
+//            for (int j = 0; j < key.length(); j++) {
+//                asciiV += (int) key.charAt(j);
+//            }
+//        }
+//        return asciiV;
+//    }
 }
