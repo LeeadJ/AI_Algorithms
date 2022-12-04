@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This class will receive a query row, and clean the data according to certain variables.
@@ -14,18 +15,19 @@ import java.util.ArrayList;
  * 9) _permutationList - A list of the permutations needed.
  */
 public class DataCleaner {
-
-    public String _queryName;
-    public Variable _queryVariable;
-    public String _queryVarValue;
-    public ArrayList<String> _evidenceList;
-    public ArrayList<String> _evidenceValList;
-    public ArrayList<String> _evidenceVarValList;
+    //Query Example: P(B=T|J=T,M=T)
+    public String _queryName; // (String) B
+    public Variable _queryVariable; // (Variable) B
+    public String _queryVarValue; // (String) T
+    public ArrayList<String> _evidenceList; // [J, M]
+    public ArrayList<String> _evidenceValList; // [T, T]
+    public ArrayList<String> _evidenceVarValList; // [J=T, M=T]
     public char _number;
-    public ArrayList<String> _hiddenList;
+    public ArrayList<String> _hiddenList; // [A, E]
     public int _outcome_combination_num;
-    public ArrayList<Variable> _variableList;
+    public ArrayList<Variable> _variableList; // (Variable) [B, E, A, J, M]
     public ArrayList<ArrayList<String>> _permutationList;
+    public HashMap<Variable, String> _evAndQMap; // (Map) {B=T, J=T, M=T}
 
     /**
      * This Constructor is in charge of cleaning the data.
@@ -79,6 +81,18 @@ public class DataCleaner {
 
         //calculating all the wanted permutations:
         _permutationList = getAllPermutations();
+
+        //creating the evAndQList:
+        _evAndQMap = new HashMap<>();
+        _evAndQMap.put(_queryVariable, _queryVarValue);
+        for(int i = 0; i< _evidenceList.size(); i++){
+            for(Variable var : _variableList){
+                if(var.getName().equals(_evidenceList.get(i))){
+                    _evAndQMap.put(var, _evidenceValList.get(i));
+                    break;
+                }
+            }
+        }
     }
 
     public ArrayList<String> calcHidden(ArrayList<Variable> variableList) {
