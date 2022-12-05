@@ -3,21 +3,31 @@ import java.text.NumberFormat;
 import java.util.*;
 
 public class BayesRule {
-
+    /**
+     * The BayesRule Class will hold eleven variables:
+     * 1) _variableList: A list of the query Variables given by the XML file.
+     * 2) _dc: The DataCleaner reference.
+     * 3) _answer: The final answer output.
+     * 4) _multiplyCounter: A counter for the multiplication steps (precalculated).
+     * 5) _additionCounter: A counter for the addition steps (precalculated).
+     * 6) _permutations: A list of all the wanted permutations given the query variable and evidence.
+     * 7) _fullVarList: A list containing the variables according the permutations list.
+     * 8) _fullValueList: A list containing the variable Values according to the permutation list.
+     * 9) _valueListByMap: A map of key: variable and value: variable value.
+     * 10) _denominator: The denominator once the query equation is opened.
+     * 11) _numerator: The numerator once the query equation is opened (complement + denominator).
+     */
     public ArrayList<Variable> _variableList;
     public DataCleaner _dc;
     public String _answer;
-    public int _multiplyCounter;
-    public int _additionCounter;
+    public int _multiplyCounter = 0;
+    public int _additionCounter = 0;
     public ArrayList<ArrayList<String>> _permutations;
     public ArrayList<ArrayList<String>> _fullVarList;
     public ArrayList<ArrayList<String>> _fullValueList;
     public ArrayList<HashMap<String, String>> _valueListByMap;
     public double _denominator;
     public double _numerator;
-//    public int mulTest=0;
-//    public int addTest=0;
-
 
     /**
      * Constructor for the BayesRule class.
@@ -25,11 +35,13 @@ public class BayesRule {
     public BayesRule(ArrayList<Variable> varList, DataCleaner dc) {
         _variableList = varList;
         _dc = dc;
-        _multiplyCounter = calcMul();
-        _additionCounter = calcAdd();
+        //Calculating addition and multiplication:
+        calcMul();
+        calcAdd();
         _permutations = _dc._permutationList;
         _fullValueList = new ArrayList<>();
         _fullVarList = new ArrayList<>();
+        //updating the lists in according to the permutation list:
         for (ArrayList<String> temp : _permutations) {
             ArrayList<String> curr1 = new ArrayList<>();
             ArrayList<String> curr2 = new ArrayList<>();
@@ -55,33 +67,30 @@ public class BayesRule {
             }
             _valueListByMap.add(temp);
         }
-
-        _answer = calculateQuery();
+        //calculating the answer:
+        calculateQuery();
     }
 
     /**
      * This function calculates the amount of multiplication steps needed to solve the query.
      * Logic: (num of variables -1) * (num of outcome combinations) * (size of outcome list) [-because of the normalization].
      */
-    private int calcMul() {
-        return (_variableList.size() - 1) * (_dc._outcome_combination_num) * (_dc._queryVariable.getOutcomes().size());
+    private void calcMul() {
+        _multiplyCounter = (_variableList.size() - 1) * (_dc._outcome_combination_num) * (_dc._queryVariable.getOutcomes().size());
     }
 
     /**
      * This function calculates the amount of addition steps needed to solve the query.
      * Logic: (num of outcome combinations) * (size of outcome list) [-because of the normalization] + (1) [-because of the numerator]
      */
-    private int calcAdd() {
-        return (_dc._outcome_combination_num - 1) * (_dc._queryVariable.getOutcomes().size()) + (1);
+    private void calcAdd() {
+        _additionCounter = (_dc._outcome_combination_num - 1) * (_dc._queryVariable.getOutcomes().size()) + (1);
     }
 
-    /** This function returns the answer of the query. */
-
-
     /**
-     * This function calculates the query and return the answer.
+     * This function calculates the query and updates the _answer.
      */
-    private String calculateQuery() {
+    private void calculateQuery() {
         //calculating the denominator and numerator:
         _denominator = calcDenominator();
         _numerator = calcComplement() + _denominator;
@@ -90,12 +99,14 @@ public class BayesRule {
         //formatting the probability to 5th decimal:
         NumberFormat format_5_digits = new DecimalFormat("#0.00000");
         String formatted_prob = format_5_digits.format(probability);
-        return formatted_prob + "," + _additionCounter + "," + _multiplyCounter;
+        //Updating _answer:
+        _answer = formatted_prob + "," + _additionCounter + "," + _multiplyCounter;
     }
 
-
+    /** This function calculates the Denominator.
+     * Explanation:
+     * The function loops over all the variables and calculates the probabilities according to the permutation list and evidence.*/
     public double calcDenominator() {
-//        System.out.println("\t\tCalcDenominator");
         //initiating the final answer variable:
         double final_ANSWER = 0;
 
@@ -135,12 +146,13 @@ public class BayesRule {
         return final_ANSWER;
     }
 
-
     /**
-     * This function calculates the numerator. It loops throught the different outcomes of the query variable,
-     * and uses the same calculation as the calcDenominator on the outcomes that are not given.
+     * This function calculates the Numerator.
+     * Explanation:
+     * The function loops through the different outcomes of the query variable.
+     * It uses the same calculation as the calcDenominator on the outcomes that are not given.
      */
-    public double calcComplement() {
+    private double calcComplement() {
         //initializing the final answer variable:
         double final_ANSWER = 0;
 
