@@ -20,29 +20,37 @@ public class Variable_Elimination_ABC_Order {
     public Variable_Elimination_ABC_Order(DataCleaner dc) {
         _dc = dc;
         _variableList = _dc._variableList;
-        System.out.println("\n\t\tFactors");
-        _factorList = cleanFactorList();
-        for (Factor f : _factorList)
-            System.out.println(f);
-        System.out.println("Factor list size: " + _factorList.size());
+        _answer = "";
 
+        //Creating the factor list with the constraints:
+        _factorList = new ArrayList<>();
+        cleanFactorList();
 
         //Setting the hidden variable elimination by ABC order:
         _eliminationOrderList = new ArrayList<>(_dc._hiddenList);
         Collections.sort(_eliminationOrderList);
-        System.out.println("_eliminationOrderList: "+_eliminationOrderList);
 
-        _answer = calculateQuery();
+        //initializing the answer of the query:
+//        calculateQuery();
+
+        //Prints
+        System.out.println("\n\t\tFactors");
+        System.out.println("Factor list size: " + _factorList.size());
+        System.out.println("_eliminationOrderList: "+_eliminationOrderList+"\n");
+        for (Factor f : _factorList)
+            System.out.println(f);
+
     }
 
 
-    private String calculateQuery() {
-        String ans = "sdsd";
+    private void calculateQuery() {
+        _answer = "Fix Here";
+        for(String varName : _eliminationOrderList){
+            for(Factor )
+        }
 
-
-
-        return ans;
     }
+
     /** This is the Join function.
      * @param f1 - First factor to join.
      * @param f2 - Second Factor to join.
@@ -52,7 +60,7 @@ public class Variable_Elimination_ABC_Order {
      * The resulting row will be entered in the new Factor.
      * At the end, f1 and f2 will be removed from the _factorList and the new Factor will be added.*/
     public void join(Factor f1, Factor f2){
-        Factor newF = new Factor();
+        Factor newF = new Factor(_dc);
         //creating an ArrayList that holds the common variables between f1 and f2:
         ArrayList<String> common_vars = new ArrayList<>();
         //Looping over the f1's first row of its table and checking the variables of the row:
@@ -89,8 +97,17 @@ public class Variable_Elimination_ABC_Order {
                 }
             }
         }
+        //Removing the old Facotrs f1 and f2:
         _factorList.remove(f1);
         _factorList.remove(f2);
+
+        //updating the newF fields:
+        //_ID
+        newF.calcID();
+        //_ascii_value
+        newF.calcASCII();
+
+        //Adding the newF to the factorList and resorting according to factor size:
         _factorList.add(newF);
         _factorList.sort(Factor::compareTo);
     }
@@ -153,10 +170,19 @@ public class Variable_Elimination_ABC_Order {
                 index_balancer++;
             }
         }
+        //Updating the Factor fields:
+        fact.calcASCII();
+        //Updating _ID:
+        fact.calcID();
     }
-
+    /**This is the normalize function.
+     * @param fact - The Factor to normalize.
+     * Explanation:
+     * The function receives a Factor to normalize.
+     * It sums up all the probabilities in the rows of the Factor.
+     * Last, it divides the query variable value by the total probability sum and updates the row accordingly.*/
     public void normalizeFactor(Factor fact){
-        double total_prob_sum = Double.parseDouble(fact._table.get(0).get("Prob"));
+        double total_prob_sum = 0;
         //looping over the rows of the Factor and calculating the total probability sum:
         for(HashMap<String, String> row : fact._table){
             total_prob_sum += Double.parseDouble(row.get("Prob"));
@@ -179,27 +205,26 @@ public class Variable_Elimination_ABC_Order {
      * 2) The variables is an evidence variable:
      * 3) The variable is an ancestor of the query or evidence variables.
      */
-    private ArrayList<Factor> cleanFactorList() {
-        ArrayList<Factor> factorList = new ArrayList<>();
+    private void cleanFactorList() {
         next_var:
         for (Variable var : _variableList) {
             if (_dc._evAndQMap.containsKey(var)) {
                 Factor currF = new Factor(var, _dc);
                 if (currF._row_size > 1) {
-                    factorList.add(currF);
+                    _factorList.add(currF);
                 }
             } else {
                 for (Variable evAndQVar : _dc._evAndQMap.keySet()) {
                     if (evAndQVar.isAncestor(var)) {
                         Factor currF = new Factor(var, _dc);
                         if (currF._row_size > 1) {
-                            factorList.add(new Factor(var, _dc));
+                            _factorList.add(new Factor(var, _dc));
                         }
                         continue next_var;
                     }
                 }
             }
         }
-        return factorList;
+        _factorList.sort(Factor::compareTo);
     }
 }
