@@ -2,8 +2,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class will receive a query row, and clean the data according to certain variables.
- * The DataCleaner Class will hold six variables:
+ * This is the DataCleaner class.
+ * It will receive a query row, and clean the data according to certain variables.
+ * It has ten variables:
  * 1) _queryVar: The query variable.
  * 2) _queryVarValue: The value of the query variable.
  * 3) _evidenceList: An Arraylist of type string representing the evidence variables.
@@ -13,6 +14,7 @@ import java.util.HashMap;
  * 7) _outcome_combination_num - counts the amount of possible outcomes.
  * 8) _variableList - the query variable list in type variable.
  * 9) _permutationList - A list of the permutations needed.
+ * 10) _evAndQMap - A Map of the query and evidence variables with key: variable and value: variable value.
  */
 public class DataCleaner {
     //Query Example: P(B=T|J=T,M=T)
@@ -64,7 +66,8 @@ public class DataCleaner {
         }
 
         //initializing the _hiddenList:
-        _hiddenList = calcHidden(_variableList);
+        _hiddenList = new ArrayList<>();
+        calcHidden();
 
         //calculating the number of outcome combinations:
         int num = 1;
@@ -80,14 +83,15 @@ public class DataCleaner {
                 _queryVariable = var;
 
         //calculating all the wanted permutations:
-        _permutationList = getAllPermutations();
+        _permutationList = new ArrayList<>();
+        calcPermutationList();
 
         //creating the evAndQList:
         _evAndQMap = new HashMap<>();
         _evAndQMap.put(_queryVariable, _queryVarValue);
-        for(int i = 0; i< _evidenceList.size(); i++){
-            for(Variable var : _variableList){
-                if(var.getName().equals(_evidenceList.get(i))){
+        for (int i = 0; i < _evidenceList.size(); i++) {
+            for (Variable var : _variableList) {
+                if (var.getName().equals(_evidenceList.get(i))) {
                     _evAndQMap.put(var, _evidenceValList.get(i));
                     break;
                 }
@@ -95,20 +99,21 @@ public class DataCleaner {
         }
     }
 
-    public ArrayList<String> calcHidden(ArrayList<Variable> variableList) {
-        ArrayList<String> hidden = new ArrayList<>();
+    /**
+     * This function loops over the variable list and updates the hiddenList according to the query.
+     */
+    public void calcHidden() {
         String[] arr = _queryName.split("=");
-        for (Variable var : variableList) {
+        for (Variable var : _variableList) {
             if (!_evidenceList.contains(var.getName()) && !var.getName().equals(arr[0]))
-                hidden.add(var.getName());
+                _hiddenList.add(var.getName());
         }
-        return hidden;
     }
 
     /**
-     * This function generates and returns a cleaner permutation list according to the wanted outcomes.
+     * This function generates and updates a cleaner permutation list according to the wanted outcomes.
      */
-    public ArrayList<ArrayList<String>> getAllPermutations() {
+    private void calcPermutationList() {
         ArrayList<String> outcomeList = new ArrayList<>();
         //loop through the hidden variables:
         for (String name : _hiddenList)
@@ -122,24 +127,15 @@ public class DataCleaner {
                             outcomeList.add(out);
                     break;
                 }
-        return generate_permutations(outcomeList, outcomeList.size(), _hiddenList.size());
-    }
 
-    /**
-     * This function generates all the permutations of a given array.
-     *
-     * @param outcomes  - An ArrayList containing the type of outcomes to permute.
-     * @param list_size - The size of the outcomes list.
-     * @param perm_size - the size of the wanted permutations.
-     */
-    public ArrayList<ArrayList<String>> generate_permutations(ArrayList<String> outcomes, int list_size, int perm_size) {
-        ArrayList<ArrayList<String>> flist = new ArrayList<>();
+        int list_size = outcomeList.size();
+        int perm_size = _hiddenList.size();
         outer:
         for (int i = 0; i < (int) Math.pow(list_size, perm_size); i++) {
             int index = i;
             ArrayList<String> alist = new ArrayList<>();
             for (int j = 0; j < perm_size; j++) {
-                alist.add(outcomes.get(index % list_size));
+                alist.add(outcomeList.get(index % list_size));
                 index /= list_size;
             }
             //Checking if the alist is relevent to the wanted outcomes. If not, don;t add it to the flist.
@@ -158,8 +154,7 @@ public class DataCleaner {
                     }
                 }
             }
-            flist.add(alist);
+            _permutationList.add(alist);
         }
-        return flist;
     }
 }
