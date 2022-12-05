@@ -36,7 +36,7 @@ public class InputParser {
             String query = br.readLine();
             while (query != null) {
                 _input_queries.add(query);
-                System.out.println(query);
+//                System.out.println(query);
                 query = br.readLine();
             }
         } catch (IOException e) {
