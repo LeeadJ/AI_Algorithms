@@ -73,56 +73,28 @@ public class Variable {
     }
 
     /**
-     * Setters:
+     * This function adds a variable to the current variables parent list.
+     *
+     * @param p - parent variable to be added.
      */
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public void setParents(ArrayList<Variable> parents) {
-        _parents = parents;
-    }
-
-    public void setChildren(ArrayList<Variable> children) {
-        _children = children;
-    }
-
-    public void set_outcomes(ArrayList<String> outcomes) {
-        _outcomes = outcomes;
-    }
-
-    /** Functions: */
-
-    /**
-     * @return - String of the Variable.
-     */
-    @Override
-    public String toString() {
-        StringBuilder var = new StringBuilder("\nVariable Name: " + this._name);
-        var.append("\nParents: [");
-        for (Variable p : this._parents)
-            var.append(p.getName()).append(", ");
-        if (this._parents.size() != 0)
-            var = new StringBuilder(var.substring(0, var.length() - 2));
-        var.append("]\nChildren: [");
-        for (Variable c : this._children)
-            var.append(c.getName()).append(", ");
-        if (this._children.size() != 0)
-            var = new StringBuilder(var.substring(0, var.length() - 2));
-        var.append("]\nOutcomes: ").append(this._outcomes);
-        var.append("\n\tCPT: ").append(this._cpt.toString());
-        return var.toString();
-    }
-
-
     public void addParent(Variable p) {
         this._parents.add(p);
     }
 
+    /**
+     * This function adds a variable to the current variables child list.
+     *
+     * @param c - child variable to be added.
+     */
     public void addChild(Variable c) {
         this._children.add(c);
     }
 
+    /**
+     * This function adds an outcome to the current variables outcome list.
+     *
+     * @param out - outcome to be added.
+     */
     public void addOutcomes(String out) {
         this._outcomes.add(out);
     }
@@ -132,12 +104,14 @@ public class Variable {
      *               Each index of the String array represents a row of the CPT table.
      */
     public void initCPT(String[] values) {
-        //System.out.println("\t\tINIT CPT START: ");
+        //initializing the cpt row size:
         _cpt._row_size = values.length;
-        //System.out.println("CPT ROW SIZE: "+ this._cpt._row_size);
+        //looping over the values and adding them to the CPT:
         for (int i = 0; i < values.length; i++) {
+            //Creating a CPT row which is a HashMap
             HashMap<String, String> rows = new HashMap<>();
             rows.put(_name, _outcomes.get(i % _outcomes.size()));
+            //Updating the outcomes according to the parent variables:
             int j = _parents.size() - 1;
             int outcome_size = _outcomes.size();
             while (j >= 0) {
@@ -146,7 +120,9 @@ public class Variable {
                 j--;
                 outcome_size *= temp.getOutcomes().size();
             }
+            //adding the probability to the row:
             rows.put("Prob", values[i]);
+            //adding the row to the final CPT:
             _cpt._cpt_table.add(rows);
         }
     }
@@ -165,5 +141,23 @@ public class Variable {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder var = new StringBuilder("\nVariable Name: " + this._name);
+        var.append("\nParents: [");
+        for (Variable p : this._parents)
+            var.append(p.getName()).append(", ");
+        if (this._parents.size() != 0)
+            var = new StringBuilder(var.substring(0, var.length() - 2));
+        var.append("]\nChildren: [");
+        for (Variable c : this._children)
+            var.append(c.getName()).append(", ");
+        if (this._children.size() != 0)
+            var = new StringBuilder(var.substring(0, var.length() - 2));
+        var.append("]\nOutcomes: ").append(this._outcomes);
+        var.append("\n\tCPT: ").append(this._cpt.toString());
+        return var.toString();
     }
 }
