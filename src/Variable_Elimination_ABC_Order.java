@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class Variable_Elimination_ABC_Order {
 
@@ -9,6 +8,7 @@ public class Variable_Elimination_ABC_Order {
     public int _multiplyCounter=0;
     public int _additionCounter=0;
     public ArrayList<Factor> _factorList;
+    public ArrayList<String> _eliminationOrderList;
 
     public Variable_Elimination_ABC_Order(DataCleaner dc){
         _dc = dc;
@@ -19,7 +19,13 @@ public class Variable_Elimination_ABC_Order {
             System.out.println(f);
         System.out.println("Factor list size: "+_factorList.size());
         _answer = calculateQuery();
+
+        //Setting the hidden variable elimination by ABC order:
+        _eliminationOrderList = new ArrayList<>(_dc._hiddenList);
+        Collections.sort(_eliminationOrderList);
+
     }
+
 
     private String calculateQuery() {
         String ans = "sdfsdfsdf";
