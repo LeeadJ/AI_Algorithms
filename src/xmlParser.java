@@ -12,14 +12,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class xmlParser {
+    /**
+     * This is the XML parser class. It extracts the information from the XML file and updates the data accordingly
+     * 1) _FILENAME: The file path of the xml file.
+     */
     private final String _FILENAME;
 
+    /**
+     * A Constructor for the cmlParser class.
+     *
+     * @param FILENAME - the xml file path.
+     */
     public xmlParser(String FILENAME) {
         _FILENAME = FILENAME;
     }
 
+    /**
+     * This function parses the file and returns a variable list of all the given variables.
+     */
     public ArrayList<Variable> parse_file() {
-//        System.out.println(_FILENAME);
+        //Initializing the variable lists:
         ArrayList<Variable> variable_list = new ArrayList<>();
         ArrayList<String> variableName_list = new ArrayList<>();
 
@@ -32,29 +44,22 @@ public class xmlParser {
             //using the doc builder in order to parse the xml file in its standard.
             Document doc = dBuild.parse(xmlDoc);
 
-            //Read root element
-//            System.out.println("Root element: " + doc.getDocumentElement().getNodeName());
-
             //Parsing the first set of information in the xml file ("VARIABLES", "NAME", "OUTCOME")
             NodeList nList = doc.getElementsByTagName("VARIABLE");
             for (int i = 0; i < nList.getLength(); i++) {
                 Node nNode = nList.item(i);
-//                System.out.println("Node name: " + nNode.getNodeName() + " " + (i+1));
                 //reading the attributes of each Node (variable):
                 //Only if the child of the node is an element:
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element elem = (Element) nNode;
                     Variable var = new Variable(elem.getElementsByTagName("NAME").item(0).getTextContent());
-//                    System.out.println("NAME: " + elem.getElementsByTagName("NAME").item(0).getTextContent());
                     int iter = 0;
                     while (elem.getElementsByTagName("OUTCOME").item(iter) != null) {
                         var.addOutcomes(elem.getElementsByTagName("OUTCOME").item(iter).getTextContent());
-//                        System.out.println("OOUTCOME "+(iter+1)+": "+elem.getElementsByTagName("OUTCOME").item(iter).getTextContent());
                         iter++;
                     }
                     variable_list.add(var);
                     variableName_list.add(var.getName());
-//                    System.out.println("------------------------------------------------");
                 }
             }
             //Parsing the second set of information in the xml file ("DEFINITION", "FOR", "GIVEN", "TABLE")
