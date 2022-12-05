@@ -103,9 +103,11 @@ public class BayesRule {
         _answer = formatted_prob + "," + _additionCounter + "," + _multiplyCounter;
     }
 
-    /** This function calculates the Denominator.
+    /**
+     * This function calculates the Denominator.
      * Explanation:
-     * The function loops over all the variables and calculates the probabilities according to the permutation list and evidence.*/
+     * The function loops over all the variables and calculates the probabilities according to the permutation list and evidence.
+     */
     public double calcDenominator() {
         //initiating the final answer variable:
         double final_ANSWER = 0;
