@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Factor implements Comparable<Factor> {
     /**
-     * The Factor Class will hold four variables:
+     * The Factor Class will hold six variables:
      * 1) _ID: The ID of the factor (i.e. f4(E))
      * 2) _var: The variable of the Factor.
      * 3) _table: A copy of the CPT table containing only the wanted rows for the factor.
@@ -32,6 +32,7 @@ public class Factor implements Comparable<Factor> {
 
     /**
      * Constructor for Factor.
+     *
      * @param dc - The DataCleaner.
      */
     public Factor(Variable var, DataCleaner dc) {
@@ -42,28 +43,27 @@ public class Factor implements Comparable<Factor> {
 
         //Looping through the var CPT and adding relevant rows according to the evidence input:
         next_line:
-        for(HashMap<String, String> cpt_line : _var.getCPT()._cpt_table){
-            for(int i=0; i<dc._evidenceList.size(); i++){
-                if(cpt_line.containsKey(dc._evidenceList.get(i))){
-                    if(!cpt_line.get(dc._evidenceList.get(i)).equals(dc._evidenceValList.get(i)))
+        for (HashMap<String, String> cpt_line : _var.getCPT()._cpt_table) {
+            for (int i = 0; i < dc._evidenceList.size(); i++) {
+                if (cpt_line.containsKey(dc._evidenceList.get(i))) {
+                    if (!cpt_line.get(dc._evidenceList.get(i)).equals(dc._evidenceValList.get(i)))
                         continue next_line;
                 }
             }
             HashMap<String, String> line = new HashMap<>();
-            for(Map.Entry<String, String> keyAndVal : cpt_line.entrySet()){
-                if(!dc._evidenceList.contains(keyAndVal.getKey()))
+            for (Map.Entry<String, String> keyAndVal : cpt_line.entrySet()) {
+                if (!dc._evidenceList.contains(keyAndVal.getKey()))
                     line.put(keyAndVal.getKey(), keyAndVal.getValue());
             }
             _table.add(line);
         }
+        //Updating the row size:
         _row_size = _table.size();
 
-        //claculating _ID:
+        //calculating _ID:
         calcID();
         //Calculating the ASCII value:
         calcASCII();
-
-
     }
 
     /**
@@ -83,32 +83,25 @@ public class Factor implements Comparable<Factor> {
         return 1;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder str = new StringBuilder("Factor _id: " + _ID + "\nRow Size: " + _row_size + "\nASCII Value: "+_ascii_value + "\n");
-        for (HashMap<String, String> row : _table) {
-            str.append(row.toString()).append("\n");
-        }
-        return str.toString();
-    }
-
-    /** This function calculates the _ID ArrayList. */
-    public void calcID(){
+    /**
+     * This function calculates the _ID ArrayList.
+     */
+    public void calcID() {
         _ID.clear();
-        for(String variable : _table.get(0).keySet()){
-            if(!variable.equals("Prob"))
+        for (String variable : _table.get(0).keySet()) {
+            if (!variable.equals("Prob"))
                 _ID.add(variable);
         }
         Collections.sort(_ID);
     }
 
-
     /**
-     * This function finds the ASCII value of the Factor. */
-    public void calcASCII(){
+     * This function finds the ASCII value of the Factor.
+     */
+    public void calcASCII() {
         int ascii = 0;
-        for(String str : _ID){
-            for(int i=0; i<str.length(); i++){
+        for (String str : _ID) {
+            for (int i = 0; i < str.length(); i++) {
                 ascii += str.charAt(i);
             }
         }
@@ -117,11 +110,22 @@ public class Factor implements Comparable<Factor> {
 
     /**
      * This function adds a new row to the table (used in VE).
+     *
+     * @param prob - the prbability to be added in the row.
      */
     public void add_row(String prob) {
         HashMap<String, String> new_row = new HashMap<>();
         new_row.put("Prob", prob);
         _table.add(new_row);
         _row_size++;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder("Factor _id: " + _ID + "\nRow Size: " + _row_size + "\nASCII Value: " + _ascii_value + "\n");
+        for (HashMap<String, String> row : _table) {
+            str.append(row.toString()).append("\n");
+        }
+        return str.toString();
     }
 }
