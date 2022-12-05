@@ -38,23 +38,9 @@ public class Variable_Elimination_ABC_Order {
 
     private String calculateQuery() {
         String ans = "sdsd";
-        //Looping over the variables to be eliminated:
-        for(String var_to_eliminate : _eliminationOrderList){
-            //Creating a list of factors containing the var to be eliminated:
-            ArrayList<Factor> factorsVarEliminateList = new ArrayList<>();
-            for(Factor f : _factorList){
-                if(f._ID.contains(var_to_eliminate)){
-                    factorsVarEliminateList.add(f);
-                    //removing the factor from the original list:
-//                    _factorList.remove(f);
-                }
-            }
-            factorsVarEliminateList.sort((f1, f2) -> Integer.compare(f1._row_size, f2._row_size));
-            System.out.println("factorsVarEliminateList: "+factorsVarEliminateList);
-//            Factor newFactor = joinAndEliminate(factorsVarEliminateList);
-//            _factorList.add(newFactor);
 
-        }
+
+
         return ans;
     }
     /** This is the Join function.
@@ -165,6 +151,23 @@ public class Variable_Elimination_ABC_Order {
                 fact._table.remove(i - index_balancer);
                 fact._row_size--;
                 index_balancer++;
+            }
+        }
+    }
+
+    public void normalizeFactor(Factor fact){
+        double total_prob_sum = Double.parseDouble(fact._table.get(0).get("Prob"));
+        //looping over the rows of the Factor and calculating the total probability sum:
+        for(HashMap<String, String> row : fact._table){
+            total_prob_sum += Double.parseDouble(row.get("Prob"));
+            _additionCounter++;
+        }
+        //Calculating the normalized wanted query value probability:
+        for(HashMap<String, String> row : fact._table){
+            if(row.get(_dc._queryName).equals(_dc._queryVarValue)){
+                String final_value = ""+ (Double.parseDouble(row.get(_dc._queryVarValue)) / total_prob_sum);
+                row.replace("Prob", final_value);
+                break;
             }
         }
     }
