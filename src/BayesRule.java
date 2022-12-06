@@ -20,14 +20,16 @@ public class BayesRule {
     public ArrayList<Variable> _variableList;
     public DataCleaner _dc;
     public String _answer;
-    public int _multiplyCounter = 0;
-    public int _additionCounter = 0;
+//    public int _multiplyCounter = 0;
+//    public int _additionCounter = 0;
     public ArrayList<ArrayList<String>> _permutations;
     public ArrayList<ArrayList<String>> _fullVarList;
     public ArrayList<ArrayList<String>> _fullValueList;
     public ArrayList<HashMap<String, String>> _valueListByMap;
     public double _denominator;
     public double _numerator;
+    public int _mulCounter =0;
+    public int _addCounter =0;
 
     /**
      * Constructor for the BayesRule class.
@@ -36,8 +38,8 @@ public class BayesRule {
         _variableList = varList;
         _dc = dc;
         //Calculating addition and multiplication:
-        calcMul();
-        calcAdd();
+//        calcMul();
+//        calcAdd();
         _permutations = _dc._permutationList;
         _fullValueList = new ArrayList<>();
         _fullVarList = new ArrayList<>();
@@ -75,17 +77,17 @@ public class BayesRule {
      * This function calculates the amount of multiplication steps needed to solve the query.
      * Logic: (num of variables -1) * (num of outcome combinations) * (size of outcome list) [-because of the normalization].
      */
-    private void calcMul() {
-        _multiplyCounter = (_variableList.size() - 1) * (_dc._outcome_combination_num) * (_dc._queryVariable.getOutcomes().size());
-    }
+//    private void calcMul() {
+//        _multiplyCounter = (_variableList.size() - 1) * (_dc._outcome_combination_num) * (_dc._queryVariable.getOutcomes().size());
+//    }
 
     /**
      * This function calculates the amount of addition steps needed to solve the query.
      * Logic: (num of outcome combinations) * (size of outcome list) [-because of the normalization] + (1) [-because of the numerator]
      */
-    private void calcAdd() {
-        _additionCounter = (_dc._outcome_combination_num - 1) * (_dc._queryVariable.getOutcomes().size()) + (1);
-    }
+//    private void calcAdd() {
+//        _additionCounter = (_dc._outcome_combination_num - 1) * (_dc._queryVariable.getOutcomes().size()) + (1);
+//    }
 
     /**
      * This function calculates the query and updates the _answer.
@@ -94,13 +96,16 @@ public class BayesRule {
         //calculating the denominator and numerator:
         _denominator = calcDenominator();
         _numerator = calcComplement() + _denominator;
+        _addCounter++; // for the numerator addition.
         //calculating the probabilitiy:
         double probability = _denominator / _numerator;
         //formatting the probability to 5th decimal:
         NumberFormat format_5_digits = new DecimalFormat("#0.00000");
         String formatted_prob = format_5_digits.format(probability);
         //Updating _answer:
-        _answer = formatted_prob + "," + _additionCounter + "," + _multiplyCounter;
+//        _answer = formatted_prob + "," + _additionCounter + "," + _multiplyCounter;
+        _answer = formatted_prob + "," + _addCounter + "," + _mulCounter;
+
     }
 
     /**
@@ -139,12 +144,16 @@ public class BayesRule {
                     //If reached here, all condVarKeyVal key and values equal. FOUND CORRECT CPT LINE!
                     //Add the Probability to the total sum:
                     tempMapSUM *= Double.parseDouble(cpt_line_Map.get("Prob"));
+                    _mulCounter++;
                     continue next_var;
                 }
             }
             //Adding the tempMap sum to the final answer:
             final_ANSWER += tempMapSUM;
+            _addCounter++;
+            _mulCounter--; //removing one mul because the first var in the line was counted as a mul.
         }
+        _addCounter--; // removing an add because the first line was counted in the add;
         return final_ANSWER;
     }
 
@@ -194,17 +203,20 @@ public class BayesRule {
                         //If reached here, all condVarKeyVal key and values equal. FOUND CORRECT CPT LINE!
                         //Add the Probability to the total sum:
                         tempMapSUM *= Double.parseDouble(cpt_line_Map.get("Prob"));
+                        _mulCounter++; //adding to mul because var was calculated.
                         continue next_var;
                     }
                 }
                 System.out.println(final_ANSWER + " + " + tempMapSUM + " = " + (final_ANSWER + tempMapSUM));
                 //adding the tempMapSum to the final answer:
                 final_ANSWER += tempMapSUM;
-
+                _addCounter++; //adding to add because line was finished.
+                _mulCounter--; //lowering a mul because the first var was counted as a mul.
                 //Switching the tempMap variable outcome back to the original query outcome to avoid future problems:
                 tempMap.replace(_dc._queryName, _dc._queryVarValue);
             }
         }
+        _addCounter--; //lowering an add because the first line was counted in the line.
         System.out.println("\t\t\t\t\tANS------" + final_ANSWER);
         return final_ANSWER;
     }
