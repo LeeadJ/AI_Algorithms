@@ -14,16 +14,21 @@ public class Ex1 {
         for (String query : in._input_queries) {
             //Creating a DataCleaner object. This will Clean and organize the data accordingly:
             DataCleaner dc = new DataCleaner(query, variableList);
-//            System.out.println(query);
+            System.out.println(query);
 //            System.out.println("_number: "+dc._number);
 //            System.out.println("_queryVar: "+dc._queryName);
 //            System.out.println("_queryVarValue: "+dc._queryVarValue);
-//            System.out.println("_evidenceVarValList: "+dc._evidenceVarValList);
+            System.out.println("_evidenceVarValList: "+dc._evidenceVarValList);
 //            System.out.println("_evidenceList: "+dc._evidenceList);
 //            System.out.println("_evidenceValList: "+dc._evidenceValList);
-//            System.out.println("_hiddenList: "+dc._hiddenList);
+//            System.out.println("_evAndQMap: "+dc._evAndQMap);
+            System.out.println("_hiddenList: "+dc._hiddenList);
+            System.out.print("Variables: [");
+            for(Variable var : dc._variableList)
+                System.out.print(var.getName() + " ");
+            System.out.println("]");
 //            System.out.println("_outcome_combination_num: "+dc._outcome_combination_num);
-//            System.out.println("-------------------------------------");
+            System.out.println("-------------------------------------");
             switch (dc._number) {
                 case ONE:
                     //BayesRule
@@ -35,45 +40,32 @@ public class Ex1 {
 //                    System.out.println("_valueListbyMap: "+br._valueListByMap);
 //                    System.out.println("*******Permutation List: "+br._permutations);
 //                    System.out.println(br.calcDenominator());
-                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+//                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 //                    System.out.println(br.calcComplement());
 //                    System.out.println("\n\n br.getAnswer(): "+ br._answer+"\n\n");
                     CreateOutput.addLine(br._answer);
                     break;
                 case TWO:
                     //VE
-//                    CreateOutput.addLine(...);
+                    Variable_Elimination_ABC_Order ve = new Variable_Elimination_ABC_Order(dc);
+                    System.out.println("ANSWER: "+ve._answer);
+                    System.out.println("\n\nADDITION: "+ve._additionCounter);
+                    System.out.println("\n\nMULTIPLICATION: "+ve._multiplyCounter);
+                    CreateOutput.addLine(ve._answer);
                     break;
                 case THREE:
                     //VE heuristic
-//                    CreateOutput.addLine(...);
+//                    Variable_Elimination_Heuristic_Order veH = new Variable_Elimination_Heuristic_Order(dc);
+//                    CreateOutput.addLine(veH._answer);
                     break;
             }
+            try{
+                CreateOutput.writeToFile();
+            } catch(NullPointerException e){
+                throw new NullPointerException("Error Ex1: Line to write is empty");
+            }
 
-            CreateOutput.writeToFile();
         }
-        for (Variable var : variableList)
-            System.out.println(var.toString());
 
-//        InputParser in = new InputParser("input.txt");
-//        in.extractFile();
-//        xmlParser xml_file = new xmlParser(in._xml_Path);
-//        xmlParser xml_file = new xmlParser("big_net.xml");
-//        ArrayList<Variable> arr = xml_file.parse_file();
-//        for(Variable var : arr)
-//            System.out.println(var.toString());
-
-
-//        System.out.println(arr.get(2).getCPT()._cpt_table.get(0));
-//        System.out.println(arr.get(2).getCPT()._cpt_table.get(0).keySet());
-//        System.out.println(arr.get(2).getCPT()._cpt_table.get(0).values());
-//        System.out.println(in._input_queries.get(0));
-//
-//        for(String query : in._input_queries) {
-//            char number = query.charAt(query.length() - 1);
-//            query = query.substring(0, query.length() - 2);
-//            System.out.println(number);
-//            System.out.println(query);
-//        }
     }
 }
