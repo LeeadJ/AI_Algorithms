@@ -74,11 +74,11 @@ public class Factor implements Comparable<Factor> {
      */
     @Override
     public int compareTo(Factor other) {
-        if (_row_size > other._row_size) return 1;
-        else if (other._row_size > _row_size) return -1;
+        if (this._row_size > other._row_size) return 1;
+        else if (this._row_size < other._row_size) return -1;
             //If the row sizes are the same, compare by ascii value:
-        else if (_ascii_value > other._ascii_value) return 1;
-        else if (other._ascii_value > _ascii_value) return -1;
+        else if (this._ascii_value > other._ascii_value) return 1;
+        else if (this._ascii_value < other._ascii_value) return -1;
         //If reached here, Factors are the same. Return current Factor:
         return 1;
     }
