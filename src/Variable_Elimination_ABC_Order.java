@@ -36,7 +36,11 @@ public class Variable_Elimination_ABC_Order {
 
         //Setting the hidden variable elimination by ABC order:
         _eliminationOrderList = new ArrayList<>(_dc._hiddenList);
-        Collections.sort(_eliminationOrderList);
+        if(_dc._number=='2')
+            Collections.sort(_eliminationOrderList);
+        else{/////////////////////////////////////////////////////////////////////////neead to implement
+            Collections.sort(_eliminationOrderList);
+        }
         System.out.println("Elimination order List: " + _eliminationOrderList + " size=" + _eliminationOrderList.size());
         System.out.print("Factor List: [  ");
         for (Factor f : _factorList)
