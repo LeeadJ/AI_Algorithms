@@ -17,12 +17,10 @@ public class Variable_Elimination_ABC_Order {
     public DataCleaner _dc;
     public ArrayList<Variable> _variableList;
     public String _answer;
-    public int _multiplyCounter = 0;
-    public int _additionCounter = -1;
     public ArrayList<Factor> _factorList;
     public ArrayList<String> _eliminationOrderList;
-    public int mul;
-    public int add;
+    public int _mulCounter = 0;
+    public int _addCounter = 0;
 
     /**
      * Constructor for the Variable_Elimination_ABC_Order class.
@@ -39,18 +37,17 @@ public class Variable_Elimination_ABC_Order {
         //Setting the hidden variable elimination by ABC order:
         _eliminationOrderList = new ArrayList<>(_dc._hiddenList);
         Collections.sort(_eliminationOrderList);
-        System.out.println("Elimination order List: "+_eliminationOrderList + " size="+_eliminationOrderList.size());
+        System.out.println("Elimination order List: " + _eliminationOrderList + " size=" + _eliminationOrderList.size());
         System.out.print("Factor List: [  ");
-        for(Factor f : _factorList)
-            System.out.print(f._ID+"-"+f._row_size+"  ");
+        for (Factor f : _factorList)
+            System.out.print(f._ID + "-" + f._row_size + "  ");
         System.out.println("]"); // 3 2 2 3 2
 //        for(Factor f : _factorList)
 //            System.out.println(f);
+
         //initializing the answer of the query:
         calculateQuery();
-//        _answer += "," + _additionCounter + "," + _multiplyCounter;
-        _answer += "," + add + "," + mul;
-        System.out.println("Answer: "+_answer);
+        System.out.println("Answer: " + _answer);
 
         //Prints
 //        System.out.println("\n\t\tFactors");
@@ -62,52 +59,90 @@ public class Variable_Elimination_ABC_Order {
 
 
     private void calculateQuery() {
-        //Looping over the variables to be joined and eliminated:
-        for (String h_var : _eliminationOrderList) {
+        if (!resultGiven()) {
+            //Looping over the variables to be joined and eliminated:
+            for (String h_var : _eliminationOrderList) {
 //            System.out.println("\n\n------------------------CHANGED-VAR------------------------");
-            while (true) {
+                while (true) {
 //                System.out.println("\n\n\t\tCURRENT VAR TO ELIMINATE: " + h_var);
 
-                //creating a list holding all the indexes from the _factorList of the Factors containing the variable:
-                ArrayList<Integer> h_varFactorList = new ArrayList<>();
-                for (int i = 0; i < _factorList.size(); i++) {
-                    if (_factorList.get(i)._ID.contains(h_var))
-                        h_varFactorList.add(i);
-                }
+                    //creating a list holding all the indexes from the _factorList of the Factors containing the variable:
+                    ArrayList<Integer> h_varFactorList = new ArrayList<>();
+                    for (int i = 0; i < _factorList.size(); i++) {
+                        if (_factorList.get(i)._ID.contains(h_var))
+                            h_varFactorList.add(i);
+                    }
 //                System.out.println("\n\t\tCURRENT h_varFactorList INDEX: "+h_varFactorList);
 //                System.out.print("\n\t\tCURRENT h_varFactorList ID: ");
 
-                //If there are less than 2 factors containing the h_var, can't use join.
-                if (h_varFactorList.size() >= 2) {
-                    //If reached here there are more than two Factors containing the h_var:
-                    //Join the two first Factors (already ordered):
-                    join(_factorList.get(h_varFactorList.get(0)), _factorList.get(h_varFactorList.get(1)));
-                    continue;
-                } else if (h_varFactorList.size() > 0) {
-                    //When reached here, the h_varFactorList contains less than two factors (single factor).
-                    //Now we can eliminate the factor.
-                    eliminate(_factorList.get(h_varFactorList.get(0)), h_var);
+                    //If there are less than 2 factors containing the h_var, can't use join.
+                    if (h_varFactorList.size() >= 2) {
+                        //If reached here there are more than two Factors containing the h_var:
+                        //Join the two first Factors (already ordered):
+                        join(_factorList.get(h_varFactorList.get(0)), _factorList.get(h_varFactorList.get(1)));
+                        continue;
+                    } else if (h_varFactorList.size() > 0) {
+                        //When reached here, the h_varFactorList contains less than two factors (single factor).
+                        //Now we can eliminate the factor.
+                        eliminate(_factorList.get(h_varFactorList.get(0)), h_var);
+                    }
+                    break;
                 }
-                break;
             }
-        }
 //        System.out.println("\n\n--------------------------------FINISHED-----------------------");
 //        System.out.println("\n\n\t\tFINAL FACTOR LIST: \n"+_factorList);
 
-        //When reached here, all hidden variables were eliminated.
-        //Keep joining the remaining factors holding the same variable:
-        while (_factorList.size() > 1) {
-            //Joining the remaining Factor (which hold the query variable):
-            join(_factorList.get(0), _factorList.get(1));
-        }
+            //When reached here, all hidden variables were eliminated.
+            //Keep joining the remaining factors holding the same variable:
+            while (_factorList.size() > 1) {
+                //Joining the remaining Factor (which hold the query variable):
+                join(_factorList.get(0), _factorList.get(1));
+            }
 
-        //Normalizing the Factor:
-        normalizeFactor(_factorList.get(0));
-        for (HashMap<String, String> row : _factorList.get(0)._table)
-            if (row.get(_dc._queryName).equals(_dc._queryVarValue)) {
-                _answer = row.get("Prob");
+            //Normalizing the Factor:
+            normalizeFactor(_factorList.get(0));
+            for (HashMap<String, String> row : _factorList.get(0)._table)
+                if (row.get(_dc._queryName).equals(_dc._queryVarValue)) {
+                    _answer = row.get("Prob");
+                    break;
+                }
+            _answer += "," + _addCounter + "," + _mulCounter;
+        }
+    }
+
+    /**
+     * This function checks if the result of the query is already in the variable CPT.
+     */
+    private boolean resultGiven() {
+        boolean check1 = true;
+        boolean check2 = false;
+        next_row:
+        for (HashMap<String, String> row : _dc._queryVariable.getCPT()._cpt_table) {
+            if (check1) {
+                for (int i = 0; i < _dc._evidenceList.size(); i++) {
+                    if (!row.containsKey(_dc._evidenceList.get(i)))
+                        return false;
+                }
+                check1 = false;
+            }
+            //checking if row contains query variable value and if the amount of ev variables equal the amount of ev variables in the row:
+            if (row.get(_dc._queryName).equals(_dc._queryVarValue) && (_dc._evidenceList.size() + 2) == row.size()) {
+                //looping over the variables and checking if row contains their values.
+                for (int i = 0; i < _dc._evidenceList.size(); i++) {
+                    //if row doesn't contain a value, go to next row:
+                    if (!row.get(_dc._evidenceList.get(i)).equals(_dc._evidenceValList.get(i)))
+                        continue next_row;
+                }
+                //If reached here, all values match up:
+                double probability = Double.parseDouble(row.get("Prob"));
+                NumberFormat format_5_digits = new DecimalFormat("#0.00000");
+                String formatted_prob = format_5_digits.format(probability);
+                _answer = formatted_prob + "," + _addCounter + "," + _mulCounter;
+                check2 = true;
                 break;
             }
+        }
+        return check2;
     }
 
     /**
@@ -149,8 +184,7 @@ public class Variable_Elimination_ABC_Order {
                 if (factorize) {
                     String probability = "" + Double.parseDouble((f1_row.get("Prob"))) * Double.parseDouble(f2_row.get("Prob"));
                     newF.add_row(probability);
-                    _multiplyCounter++;
-                    mul++; //multiplied the factors line probability
+                    _mulCounter++; //multiplied the factors line probability
 
                     //Adding the new variables from the join to newF if they are absent:
                     for (String k1 : f1_row.keySet())
@@ -163,8 +197,8 @@ public class Variable_Elimination_ABC_Order {
         //Removing the old Facotrs f1 and f2:
 //        System.out.println("\n\n\t\tJOINING FACTOR f1: "+f1._ID + " and " + f2._ID);
 //        System.out.println("\n\t\tREMOVING FACTOR f1: "+f1);
-        System.out.println("---first factor---\n"+f1);
-        System.out.println("\n---second factor---\n"+f2);
+        System.out.println("---first factor---\n" + f1);
+        System.out.println("\n---second factor---\n" + f2);
         _factorList.remove(f1);
 //        System.out.println("\t\tREMOVING FACTOR f2: "+f2+"\n\n");
         _factorList.remove(f2);
@@ -178,8 +212,8 @@ public class Variable_Elimination_ABC_Order {
 //        System.out.println("\n\n\t\tAdding FACTOR: "+newF);
 
         //Adding the newF to the factorList and resorting according to factor size:
-        System.out.println("\n---new factor---\n"+newF);
-        System.out.println("Addition: "+add+"------Mult: "+mul);
+        System.out.println("\n---new factor---\n" + newF);
+        System.out.println("Addition: " + _addCounter + "------Mult: " + _mulCounter);
         _factorList.add(newF);
         _factorList.sort(Factor::compareTo);
 //        System.out.println("\n\n\t\tCURRENT FACTOR LIST: \n"+_factorList);
@@ -201,7 +235,7 @@ public class Variable_Elimination_ABC_Order {
 //        System.out.println("\n\n\t\tELIMINATING VAR: " + hidden_var);
 //        System.out.println("\n\n\t\tFACTOR TO ELIMINATE FROM: "+fact._ID);
 //        System.out.println("\n\n\t\tFACTOR BEFORE ELIMINATION: \n"+fact);
-        System.out.println("\nEliminate: "+fact._ID);
+        System.out.println("\nEliminate: " + fact._ID);
         //Creating n array indexing wich rows are to be deleted.
         Boolean[] rows_to_delete = new Boolean[fact._row_size];
         Arrays.fill(rows_to_delete, false);
@@ -213,10 +247,10 @@ public class Variable_Elimination_ABC_Order {
         }
         //If the normal_var list is empty, then the Factor only holds its own values.
         //This means the Factor need to be dropped without any additional calculations:
-        if(normal_vars.isEmpty()){
+        if (normal_vars.isEmpty()) {
             _factorList.remove(fact);
             System.out.println("\nFACTOR REMOVED FROM LIST\n");
-            System.out.println("Addition: "+add+"------Mult: "+mul+"\n------------------------------");
+            System.out.println("Addition: " + _addCounter + "------Mult: " + _mulCounter + "\n------------------------------");
 
             return;
         }
@@ -244,8 +278,7 @@ public class Variable_Elimination_ABC_Order {
                     row1.replace("Prob", probability);
                     //updating row to delete:
                     rows_to_delete[j] = true;
-                    _additionCounter++;
-                    add++;
+                    _addCounter++;
                 }
             }
             //removing the hidden key after it was eliminated:
@@ -265,8 +298,8 @@ public class Variable_Elimination_ABC_Order {
         //Updating _ID:
         fact.calcID();
 //        System.out.println("\n\n\t\tFACTOR AFTER ELIMINATION: \n"+fact);
-        System.out.println("\nNew factor after join+eliminate: \n"+fact);
-        System.out.println("Addition: "+add+"------Mult: "+mul+"\n------------------------------");
+        System.out.println("\nNew factor after join+eliminate: \n" + fact);
+        System.out.println("Addition: " + _addCounter + "------Mult: " + _mulCounter + "\n------------------------------");
     }
 
     /**
@@ -285,10 +318,9 @@ public class Variable_Elimination_ABC_Order {
         //looping over the rows of the Factor and calculating the total probability sum:
         for (HashMap<String, String> row : fact._table) {
             total_prob_sum += Double.parseDouble(row.get("Prob"));
-            _additionCounter++;
-            add++;
+            _addCounter++;
         }
-        add--;
+        _addCounter--;
 
 //        add--; // subtracting from add because an extra add was taken for the first row.
 //        System.out.println("\t\t\n\nTOTAL PROB SUM: "+total_prob_sum);
