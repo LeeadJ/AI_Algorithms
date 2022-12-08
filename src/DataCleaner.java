@@ -4,8 +4,8 @@ import java.util.HashMap;
 /**
  * This is the DataCleaner class.
  * It will receive a query row, and clean the data according to certain variables.
- * It has ten variables:
- * 1) _queryVar: The query variable.
+ * It has eleven variables:
+ * 1) _queryVariable: The query variable.
  * 2) _queryVarValue: The value of the query variable.
  * 3) _evidenceList: An Arraylist of type string representing the evidence variables.
  * 4) _evidenceValList: An Arraylist of type string representing the evidence variable values.
@@ -15,6 +15,7 @@ import java.util.HashMap;
  * 8) _variableList - the query variable list in type variable.
  * 9) _permutationList - A list of the permutations needed.
  * 10) _evAndQMap - A Map of the query and evidence variables with key: variable and value: variable value.
+ * 11) _queryName - The query variable name.
  */
 public class DataCleaner {
     //Query Example: P(B=T|J=T,M=T)
