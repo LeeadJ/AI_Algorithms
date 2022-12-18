@@ -9,12 +9,15 @@ public class Variable {
      * 3) _children: An ArrayList of type Variable representing the current variables children.
      * 4) _outcomes: An ArrayList of type String representing the current variables outcome probabilities.
      * 5) _cpt: The current variables CPT.
+     * 6)
      */
     private String _name;
     private ArrayList<Variable> _parents;
     private ArrayList<Variable> _children;
     private ArrayList<String> _outcomes;
     public CPT _cpt;
+    public int _numOfNeighbors;
+    public int _numOfFactors;
 
     /**
      * Constructor for the Variable.
@@ -27,6 +30,8 @@ public class Variable {
         _children = new ArrayList<>();
         _outcomes = new ArrayList<>();
         _cpt = new CPT();
+        _numOfNeighbors=0;
+        _numOfFactors=0;
     }
 
     /**
@@ -47,6 +52,9 @@ public class Variable {
         _outcomes.addAll(other._outcomes);
 
         _cpt = new CPT(other._cpt);
+
+        _numOfNeighbors =0;
+        _numOfFactors=0;
     }
 
     /**
@@ -71,6 +79,8 @@ public class Variable {
     public CPT getCPT() {
         return _cpt;
     }
+    public int get_numOfNeighbors() {return _numOfNeighbors;}
+    public int get_numOfFactors() {return _numOfFactors;}
 
     /**
      * This function adds a variable to the current variables parent list.
@@ -89,6 +99,7 @@ public class Variable {
     public void addChild(Variable c) {
         this._children.add(c);
     }
+
 
     /**
      * This function adds an outcome to the current variables outcome list.
@@ -160,4 +171,12 @@ public class Variable {
         var.append("\n\tCPT: ").append(this._cpt.toString());
         return var.toString();
     }
+
+//    /*****/
+//    @Override
+//    public int compareTo(Variable other) {
+//        if (this._numOfNeighbors > other._numOfNeighbors) return 1;
+//        else if (this._numOfNeighbors < other._numOfNeighbors) return -1;
+//        return 1;
+//    }
 }
