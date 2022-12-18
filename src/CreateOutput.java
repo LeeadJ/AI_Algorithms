@@ -14,7 +14,8 @@ public class CreateOutput {
 
     public static void writeToFile() {
         try {
-            FileWriter myWriter = new FileWriter("outputTest.txt");
+//            FileWriter myWriter = new FileWriter("outputTest.txt");
+            FileWriter myWriter = new FileWriter("output.txt");
             for (String toWrite : _lines) {
                 myWriter.write(toWrite);
             }
