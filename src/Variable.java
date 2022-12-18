@@ -18,6 +18,7 @@ public class Variable {
     public CPT _cpt;
     public int _numOfNeighbors;
     public int _numOfFactors;
+    public int _max_rows;
 
     /**
      * Constructor for the Variable.
@@ -30,8 +31,9 @@ public class Variable {
         _children = new ArrayList<>();
         _outcomes = new ArrayList<>();
         _cpt = new CPT();
-        _numOfNeighbors=0;
-        _numOfFactors=0;
+        _numOfNeighbors = 0;
+        _numOfFactors = 0;
+        _max_rows = 0;
     }
 
     /**
@@ -53,8 +55,9 @@ public class Variable {
 
         _cpt = new CPT(other._cpt);
 
-        _numOfNeighbors =0;
-        _numOfFactors=0;
+        _numOfNeighbors = 0;
+        _numOfFactors = 0;
+        _max_rows = 0;
     }
 
     /**
@@ -79,8 +82,18 @@ public class Variable {
     public CPT getCPT() {
         return _cpt;
     }
-    public int get_numOfNeighbors() {return _numOfNeighbors;}
-    public int get_numOfFactors() {return _numOfFactors;}
+
+    public int get_numOfNeighbors() {
+        return _numOfNeighbors;
+    }
+
+    public int get_numOfFactors() {
+        return _numOfFactors;
+    }
+
+    public int get_max_rows() {
+        return _max_rows;
+    }
 
     /**
      * This function adds a variable to the current variables parent list.
